@@ -32,6 +32,7 @@ static uint gen_vbo(const tinygltf::Accessor& accessor, const tinygltf::Model& m
 
     glEnableVertexAttribArray(index);
     glVertexAttribPointer(index, size, accessor.componentType, accessor.normalized ? true : false, byteStride, (void*)accessor.byteOffset);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     return vbo;
 }
@@ -46,7 +47,7 @@ static uint gen_ebo(const tinygltf::Accessor& accessor, const tinygltf::Model& m
     auto buffer      = model.buffers[buffer_view.buffer];
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer_view.byteLength, &buffer.data.at(0) + buffer_view.byteOffset, GL_STATIC_DRAW);
-    
+
     return ebo;
 }
 
@@ -61,7 +62,10 @@ Primitive::Primitive(const tinygltf::Primitive& primitive, const tinygltf::Model
 
     if (primitive.indices != 1) {
         m_is_indexed = true;
-        m_ebo = gen_ebo(model.accessors[primitive.indices], model);
+        m_ebo.name   = gen_ebo(model.accessors[primitive.indices], model);
+        m_ebo.count  = model.accessors[primitive.indices].count;
+        m_ebo.type   = model.accessors[primitive.indices].componentType;
+        m_ebo.offset = model.accessors[primitive.indices].byteOffset; 
     }
 
     for (const auto& attr : primitive.attributes) {
@@ -81,7 +85,20 @@ Primitive::~Primitive()
 {
     glDeleteBuffers(m_vbos.size(), m_vbos.data());
     glDeleteBuffers(1, &m_vao);
-    glDeleteBuffers(1, &m_ebo);
+    glDeleteBuffers(1, &m_ebo.name);
+}
+
+void Primitive::draw()
+{
+    glBindVertexArray(m_vao);
+
+    if (m_is_indexed) {
+        glDrawElements(m_mode, m_ebo.count, m_ebo.type, (void*)m_ebo.offset);
+    } else {
+        glDrawArrays(m_mode, )
+    }
+
+    glBindVertexArray(0);
 }
 
 Mesh::Mesh(const tinygltf::Mesh& mesh, const tinygltf::Model& model, const std::vector<shared_material> materials)
