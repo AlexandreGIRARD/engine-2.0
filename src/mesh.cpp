@@ -88,14 +88,14 @@ Primitive::~Primitive()
     glDeleteBuffers(1, &m_ebo.name);
 }
 
-void Primitive::draw()
+void Primitive::draw(Program& program)
 {
     glBindVertexArray(m_vao);
 
     if (m_is_indexed) {
         glDrawElements(m_mode, m_ebo.count, m_ebo.type, (void*)m_ebo.offset);
     } else {
-        glDrawArrays(m_mode, )
+        glDrawArrays(m_mode, 0, 0); // debug that
     }
 
     glBindVertexArray(0);
@@ -111,9 +111,9 @@ Mesh::Mesh(const tinygltf::Mesh& mesh, const tinygltf::Model& model, const std::
 Mesh::~Mesh()
 {}
 
-void Mesh::draw()
+void Mesh::draw(Program& program)
 {
     for (auto primitive : m_primitives) {
-        primitive->draw();
+        primitive->draw(program);
     }
 }

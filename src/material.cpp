@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include "program.hpp"
+
 static uint create_texture(int index, const tinygltf::Model& model)
 {
     if (index == -1)
@@ -54,4 +56,22 @@ Material::~Material()
 {
     uint textures[] = {m_base_color, m_metallic_roughness, m_normal};
     glDeleteTextures(3, textures);
+}
+
+void Material::bind(Program& program)
+{
+    if (!program.need_material_binding())
+        return;
+
+    program.addUniformTexture(0, "mtl.base_color");
+    glActiveTexture(0);
+    glBindTexture(GL_TEXTURE0, m_base_color);
+
+    program.addUniformTexture(1, "mtl.metallic_roughness");
+    glActiveTexture(1);
+    glBindTexture(GL_TEXTURE1, m_metallic_roughness);
+
+    program.addUniformTexture(2, "mtl.normal");
+    glActiveTexture(2);
+    glBindTexture(GL_TEXTURE2, m_normal);
 }

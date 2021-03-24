@@ -4,11 +4,15 @@
 #include <tiny_gltf.h>
 #include <glm/glm.hpp>
 
+class Program;
+
 class Material
 {
 public:
     Material(const tinygltf::Material& material, const tinygltf::Model& model);
     ~Material();
+
+    void bind(Program& program);
 private:
     glm::vec3 m_base_color_factor;
     double m_metallic_factor;
