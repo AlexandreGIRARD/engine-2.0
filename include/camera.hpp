@@ -11,8 +11,7 @@ class Camera
 {
 public:
 
-    Camera()
-    {}
+    Camera();
     Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float speed, float near, float far, float ratio);
     Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up);
     Camera(const Camera &cam);

@@ -88,7 +88,7 @@ Primitive::~Primitive()
     glDeleteBuffers(1, &m_ebo.name);
 }
 
-void Primitive::draw(Program& program)
+void Primitive::draw()
 {
     glBindVertexArray(m_vao);
 
@@ -111,9 +111,11 @@ Mesh::Mesh(const tinygltf::Mesh& mesh, const tinygltf::Model& model, const std::
 Mesh::~Mesh()
 {}
 
-void Mesh::draw(Program& program)
+void Mesh::draw(const Program& program, const glm::mat4& transform)
 {
+    program.addUniformMat4(transform, "model");
+
     for (auto primitive : m_primitives) {
-        primitive->draw(program);
+        primitive->draw();
     }
 }

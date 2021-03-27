@@ -5,6 +5,7 @@
 #include "mesh.hpp"
 #include "material.hpp"
 #include "light.hpp"
+#include "program.hpp"
 
 using shared_node = std::shared_ptr<Node>;
 using shared_material = std::shared_ptr<Material>;
@@ -14,9 +15,10 @@ using shared_mesh = std::shared_ptr<Mesh>;
 class Scene
 {
 public:
+    Scene(){}
     Scene(const char* path);
 
-    void draw();
+    void draw(const Program& program);
 
 private:
     bool create_scene(tinygltf::Model& model);

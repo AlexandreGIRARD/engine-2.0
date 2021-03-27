@@ -11,6 +11,11 @@
 
 #include "scene.hpp"
 #include "camera.hpp"
+#include "render_pass.hpp"
+
+using shared_scene  = std::shared_ptr<Scene>;
+using shared_camera = std::shared_ptr<Camera>;
+using shared_pass   = std::shared_ptr<Render_Pass>;
 
 class Renderer
 {
@@ -22,14 +27,18 @@ public:
 private:
     bool init_window(int major, int minor);
     bool init_imgui();
+    bool init_pipeline();
     void render_imgui();
     void render(double xpos, double ypos);
 
-    Scene  m_scene;
-    Camera m_camera;
+    shared_scene  m_scene;
+    shared_camera m_camera;
 
     GLFWwindow* m_window;
 
     double m_time;
     double m_delta;
+
+    // Pass
+    shared_pass m_basic_pass;
 };

@@ -8,10 +8,11 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-Program::Program(bool material_binding)
+Program::Program(bool material_binding, const char* folder_path)
+    : m_material_binding(material_binding)
+    , m_folder_path(folder_path)
 {
     m_id_program = glCreateProgram();
-    m_material_binding = material_binding;
 }
 
 Program::~Program()
@@ -24,10 +25,10 @@ const bool Program::need_material_binding()
     return m_material_binding;
 }
 
-void Program::add_shader(std::string path, int shader_type)
+void Program::add_shader(std::string file_name, int shader_type)
 {
     // Read file
-    std::ifstream shader("shaders/" + path);
+    std::ifstream shader(m_folder_path + file_name);
     std::stringstream buffer;
     buffer << shader.rdbuf();
     shader.close();
@@ -46,7 +47,7 @@ void Program::add_shader(std::string path, int shader_type)
     if (!success)
     {
         glGetShaderInfoLog(id, 512, NULL, infoLog);
-        std::cout << "Error at shader compilation: " << path << "\n" << infoLog << std::endl;
+        std::cout << "Error at shader compilation: " << m_folder_path << file_name << "\n" << infoLog << std::endl;
         exit(-1);
     }
 
@@ -87,38 +88,38 @@ void Program::use()
     glUseProgram(m_id_program);
 }
 
-void Program::addUniformTexture(const uint unit, const char *name)
+void Program::addUniformTexture(const uint unit, const char *name) const
 {
     glUniform1i(glGetUniformLocation(m_id_program, name), unit);
 }
 
-void Program::addUniformVec2(const glm::vec2& vector, const char *name)
+void Program::addUniformVec2(const glm::vec2& vector, const char *name) const
 {
     glUniform2f(glGetUniformLocation(m_id_program, name), vector.x, vector.y);
 }
 
-void Program::addUniformVec3(const glm::vec3& vector, const char *name)
+void Program::addUniformVec3(const glm::vec3& vector, const char *name) const
 {
     glUniform3f(glGetUniformLocation(m_id_program, name), vector.x, vector.y, vector.z);
 }
 
-void Program::addUniformVec4(const glm::vec4& vector, const char *name)
+void Program::addUniformVec4(const glm::vec4& vector, const char *name) const
 {
     glUniform4f(glGetUniformLocation(m_id_program, name), vector.x, vector.y, vector.z, vector.w);
 }
 
-void Program::addUniformMat4(const glm::mat4& matrix, const char *name)
+void Program::addUniformMat4(const glm::mat4& matrix, const char *name) const
 {
     int location = glGetUniformLocation(m_id_program, name);
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Program::addUniformUint(const uint val, const char* name)
+void Program::addUniformUint(const uint val, const char* name) const
 {
     glUniform1ui(glGetUniformLocation(m_id_program, name), val);
 }
 
-void Program::addUniformFloat(const float val, const char* name)
+void Program::addUniformFloat(const float val, const char* name) const
 {
     glUniform1f(glGetUniformLocation(m_id_program, name), val);
 }

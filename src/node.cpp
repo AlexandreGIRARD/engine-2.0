@@ -3,14 +3,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-Node::Node(tinygltf::Node& node, tinygltf::Model& model)
+Node::Node(tinygltf::Node& node, tinygltf::Model& model, std::vector<shared_mesh> meshes)
 {
     // Process element
     process_transform(node);
+    process_mesh(node, meshes);
 
     m_children.reserve(node.children.size());
     for (auto child : node.children) {
-        m_children.emplace_back(std::make_shared<Node>(model.nodes[child], model));
+        m_children.emplace_back(std::make_shared<Node>(model.nodes[child], model, meshes));
     }
 }
 
@@ -53,7 +54,19 @@ void Node::process_transform(tinygltf::Node& node)
     }
 }
 
-void process_mesh(tinygltf::Node& node, tinygltf::Model& model)
+void Node::process_mesh(tinygltf::Node& node, std::vector<shared_mesh> meshes)
 {
+    if (node.mesh < 0 || node.mesh >= meshes.size())
+        return;
+    m_mesh = meshes[node.mesh];
+}
 
+void Node::draw(const Program& program, glm::mat4 transform)
+{
+    glm::mat4 new_transform = transform * m_transform;
+    if (m_mesh)
+        m_mesh->draw(program, new_transform);
+
+    for (auto child : m_children)
+        child->draw(program, new_transform);
 }

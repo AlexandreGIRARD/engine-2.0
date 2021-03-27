@@ -21,7 +21,7 @@ struct Primitive
     Primitive(const tinygltf::Primitive& primitive, const tinygltf::Model& model, const std::vector<shared_material> materials);
     ~Primitive();
 
-    void draw(Program& program);
+    void draw();
 
     bool m_is_indexed = false;
     ebo_t m_ebo;
@@ -40,7 +40,7 @@ public:
     Mesh(const tinygltf::Mesh& mesh, const tinygltf::Model& model, const std::vector<shared_material> materials);
     ~Mesh();
 
-    void draw(Program& program);
+    void draw(const Program& program, const glm::mat4& transform);
 
 private:
     std::vector<std::shared_ptr<Primitive>> m_primitives;

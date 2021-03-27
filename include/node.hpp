@@ -13,13 +13,13 @@ using shared_mesh = std::shared_ptr<Mesh>;
 class Node
 {
 public:
-    Node(tinygltf::Node& node, tinygltf::Model& model);
+    Node(tinygltf::Node& node, tinygltf::Model& model, std::vector<shared_mesh> meshes);
     ~Node();
 
-    void draw(Program& program);
+    void draw(const Program& program, glm::mat4 transform = glm::mat4());
 protected:
     void process_transform(tinygltf::Node& node);
-    void process_mesh(tinygltf::Node& node, tinygltf::Model& model);
+    void process_mesh(tinygltf::Node& node, std::vector<shared_mesh> meshes);
 
     shared_mesh m_mesh;
     std::vector<std::shared_ptr<Node>> m_children;

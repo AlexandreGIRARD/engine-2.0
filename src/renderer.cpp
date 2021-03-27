@@ -3,13 +3,16 @@
 #include <iostream>
 
 #include "utils.hpp"
+#include "basic_pass.hpp"
 
 Renderer::Renderer(int major, int minor, const char* path)
-    : m_scene(path)
 {
     if (!init_window(major, minor))
         exit(1);
     init_imgui();
+    init_pipeline();
+    m_scene = std::make_shared<Scene>(path);
+    m_camera = std::make_shared<Camera>();
 }
 
 Renderer::~Renderer()
@@ -74,6 +77,12 @@ bool Renderer::init_imgui()
     return true;
 }
 
+bool Renderer::init_pipeline()
+{
+    m_basic_pass = std::make_shared<Basic_Pass>();
+    return true;
+}
+
 void Renderer::loop()
 {
     double xpos, ypos;
@@ -119,5 +128,5 @@ void Renderer::render_imgui()
 
 void Renderer::render(double xpos, double ypos)
 {
-
+    m_basic_pass->render(m_camera, m_scene);
 }
