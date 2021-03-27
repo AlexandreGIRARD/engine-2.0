@@ -27,6 +27,7 @@ add_executable(engine
     src/camera.cpp
     src/mesh.cpp
     src/program.cpp
+    src/renderer.cpp
 
     src/imgui/imgui.cpp
     src/imgui/imgui_demo.cpp

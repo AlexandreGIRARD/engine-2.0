@@ -24,7 +24,7 @@ bool Scene::create_scene(tinygltf::Model& model)
 
     // Create Nodes
     for (auto node: scene.nodes) {
-        
+        m_nodes.emplace_back(std::make_shared<Node>(model.nodes[node], model));
     }
     return true;
 }
@@ -50,7 +50,7 @@ Scene::Scene(const char* path)
     create_scene(model);
 }
 
-void Scene::render(GLFWwindow* window, double delta, size_t xpos, size_t ypos)
+void Scene::draw()
 {
 
 }

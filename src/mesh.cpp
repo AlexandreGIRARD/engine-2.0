@@ -57,7 +57,7 @@ Primitive::Primitive(const tinygltf::Primitive& primitive, const tinygltf::Model
     m_material = materials[primitive.material];
     m_mode     = modes[primitive.mode];
 
-    glGenBuffers(1, &m_vao);
+    glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 
     if (primitive.indices != 1) {

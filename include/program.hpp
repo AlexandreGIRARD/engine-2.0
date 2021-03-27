@@ -7,8 +7,10 @@
 class Program
 {
 public:
-    Program();
+    Program(bool material_binding);
     ~Program();
+
+    const bool need_material_binding();
 
     void add_shader(std::string path, int shader_type);
     void link();
@@ -24,4 +26,6 @@ public:
 private:
         uint m_id_program;
         std::vector<uint> m_shaders;
+
+        bool m_material_binding;
 };
