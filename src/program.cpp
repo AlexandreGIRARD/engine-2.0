@@ -8,9 +8,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-Program::Program(bool material_binding, const char* folder_path)
+Program::Program(bool material_binding)
     : m_material_binding(material_binding)
-    , m_folder_path(folder_path)
 {
     m_id_program = glCreateProgram();
 }
@@ -25,10 +24,10 @@ const bool Program::need_material_binding()
     return m_material_binding;
 }
 
-void Program::add_shader(std::string file_name, int shader_type)
+void Program::add_shader(const std::string& path, int shader_type)
 {
     // Read file
-    std::ifstream shader(m_folder_path + file_name);
+    std::ifstream shader("shaders/" + path);
     std::stringstream buffer;
     buffer << shader.rdbuf();
     shader.close();
@@ -47,7 +46,7 @@ void Program::add_shader(std::string file_name, int shader_type)
     if (!success)
     {
         glGetShaderInfoLog(id, 512, NULL, infoLog);
-        std::cout << "Error at shader compilation: " << m_folder_path << file_name << "\n" << infoLog << std::endl;
+        std::cout << "Error at shader compilation: " << path << "\n" << infoLog << std::endl;
         exit(-1);
     }
 

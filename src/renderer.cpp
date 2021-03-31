@@ -30,8 +30,8 @@ bool Renderer::init_window(int major, int minor)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    uint width = 800;
-    uint height = 800;
+    uint width = 1920;
+    uint height = 1080;
     m_window = utils::init_window(width, height);
     glfwMakeContextCurrent(m_window);
 
@@ -128,5 +128,6 @@ void Renderer::render_imgui()
 
 void Renderer::render(double xpos, double ypos)
 {
+    m_camera->update(m_window, , xpos, ypos);
     m_basic_pass->render(m_camera, m_scene);
 }

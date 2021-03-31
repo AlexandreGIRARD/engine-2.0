@@ -74,6 +74,11 @@ Primitive::Primitive(const tinygltf::Primitive& primitive, const tinygltf::Model
         if (attr.first.compare("NORMAL") == 0)     index = 1;
         if (attr.first.compare("TANGENT") == 0)    index = 2;
         if (attr.first.compare("TEXCOORD_0") == 0) index = 3;
+        if (attr.first.compare("TEXCOORD_1") == 0) index = 4;
+        if (attr.first.compare("TEXCOORD_2") == 0) index = 5;
+        if (attr.first.compare("TEXCOORD_3") == 0) index = 6;
+        if (attr.first.compare("TEXCOORD_4") == 0) index = 7;
+        if (attr.first.compare("TEXCOORD_5") == 0) index = 8;
 
         if (index != -1)
             m_vbos.emplace_back(gen_vbo(model.accessors[attr.second], model, index));

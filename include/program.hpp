@@ -7,12 +7,12 @@
 class Program
 {
 public:
-    Program(bool material_binding, const char* folder_path);
+    Program(bool material_binding);
     ~Program();
 
     const bool need_material_binding();
 
-    void add_shader(std::string file_name, int shader_type);
+    void add_shader(const std::string& path, int shader_type);
     void link();
     void use();
     void addUniformMat4(const glm::mat4& matrix, const char *name) const;
@@ -28,5 +28,4 @@ private:
         std::vector<uint> m_shaders;
 
         bool m_material_binding;
-        const char* m_folder_path;
 };

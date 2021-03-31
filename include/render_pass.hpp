@@ -13,8 +13,8 @@ using shared_scene  = std::shared_ptr<Scene>;
 class Render_Pass
 {
 public:
-    Render_Pass(bool bind_material, const char* folder_path)
-        : m_program(bind_material, folder_path)
+    Render_Pass(bool bind_material)
+        : m_program(bind_material)
     {}
     ~Render_Pass()
     {}

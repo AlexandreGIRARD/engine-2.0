@@ -6,10 +6,10 @@
 
 // default one
 Camera::Camera()
-    : m_position(-3,0,0)
+    : m_position(0,0,-5)
     , m_target(0,0,0)
-    , m_up(1,0,0)
-    , m_forward(m_target - m_position)
+    , m_up(0,1,0)
+    , m_forward(0,0,1)
     , m_right(- glm::cross(m_up, m_forward))
     , m_speed(5)
     , m_fov(90)
@@ -18,7 +18,7 @@ Camera::Camera()
     , m_near(0.1)
     , m_far(20)
 {
-    m_projection = glm::perspective(glm::radians(m_fov), 1.f, m_near, m_far);
+    m_projection = glm::perspective(glm::radians(m_fov), 1920/1080.f, m_near, m_far);
 }
 
 Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float fov, float speed, float near, float far, float ratio)

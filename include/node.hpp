@@ -16,7 +16,7 @@ public:
     Node(tinygltf::Node& node, tinygltf::Model& model, std::vector<shared_mesh> meshes);
     ~Node();
 
-    void draw(const Program& program, glm::mat4 transform = glm::mat4());
+    void draw(const Program& program, glm::mat4 transform = glm::mat4(1.0));
 protected:
     void process_transform(tinygltf::Node& node);
     void process_mesh(tinygltf::Node& node, std::vector<shared_mesh> meshes);
