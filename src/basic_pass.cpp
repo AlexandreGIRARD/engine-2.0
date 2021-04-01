@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 
 Basic_Pass::Basic_Pass()
-:  Render_Pass(false)
+:  Render_Pass(true)
 {
     m_program.add_shader("basic/basic.vert", GL_VERTEX_SHADER);
     m_program.add_shader("basic/basic.frag", GL_FRAGMENT_SHADER);

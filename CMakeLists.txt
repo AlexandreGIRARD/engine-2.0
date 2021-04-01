@@ -7,14 +7,17 @@ enable_testing()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
+# GLFW compilation var
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
 
 include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/stb)
 include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui)
 
-find_package(glfw3 REQUIRED)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw)
 
 add_executable(engine 
     src/main.cpp
@@ -44,9 +47,9 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
 target_compile_definitions(engine PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
-target_link_libraries(engine glfw OpenGL::GL dl)
+target_link_libraries(engine glfw)
 
 add_custom_command(
     TARGET engine POST_BUILD
-    COMMAND mv engine ..
+    COMMAND cp engine ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM)

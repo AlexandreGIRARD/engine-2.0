@@ -10,7 +10,7 @@ public:
     Program(bool material_binding);
     ~Program();
 
-    const bool need_material_binding();
+    const bool need_material_binding() const;
 
     void add_shader(const std::string& path, int shader_type);
     void link();
@@ -19,13 +19,13 @@ public:
     void addUniformVec2(const glm::vec2& vector, const char *name) const;
     void addUniformVec3(const glm::vec3& vector, const char *name) const;
     void addUniformVec4(const glm::vec4& vector, const char *name) const;
-    void addUniformTexture(const uint unit, const char *name) const;
+    void addUniformTexture(const unsigned int unit, const char *name) const;
     void addUniformFloat(const float val, const char* name) const;
-    void addUniformUint(const uint val, const char* name) const;
+    void addUniformUint(const unsigned int val, const char* name) const;
 
 private:
-        uint m_id_program;
-        std::vector<uint> m_shaders;
+        unsigned int m_id_program;
+        std::vector<unsigned int> m_shaders;
 
         bool m_material_binding;
 };

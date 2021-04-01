@@ -4,11 +4,11 @@
 
 #include "program.hpp"
 
-static uint create_texture(int index, const tinygltf::Model& model)
+static unsigned int create_texture(int index, const tinygltf::Model& model)
 {
     if (index == -1)
         return -1;
-    uint tex;
+    unsigned int tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
 
@@ -26,8 +26,11 @@ static uint create_texture(int index, const tinygltf::Model& model)
     nb_channels = image.component;
 
     unsigned char* data = image.image.data();
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    
+    if (nb_channels == 3)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     return tex;
@@ -54,24 +57,24 @@ Material::Material(const tinygltf::Material& material, const tinygltf::Model& mo
 
 Material::~Material()
 {
-    uint textures[] = {m_base_color, m_metallic_roughness, m_normal};
+    unsigned int textures[] = {m_base_color, m_metallic_roughness, m_normal};
     glDeleteTextures(3, textures);
 }
 
-void Material::bind(Program& program)
+void Material::bind(const Program& program)
 {
     if (!program.need_material_binding())
         return;
 
-    program.addUniformTexture(0, "mtl.base_color");
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE0, m_base_color);
+    program.addUniformTexture(0, "base_color");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_base_color);
 
-    program.addUniformTexture(1, "mtl.metallic_roughness");
-    glActiveTexture(1);
-    glBindTexture(GL_TEXTURE1, m_metallic_roughness);
+    program.addUniformTexture(1, "metallic_roughness");
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_metallic_roughness);
 
-    program.addUniformTexture(2, "mtl.normal");
-    glActiveTexture(2);
-    glBindTexture(GL_TEXTURE2, m_normal);
+    program.addUniformTexture(2, "normal");
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_normal);
 }

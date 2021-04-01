@@ -10,7 +10,7 @@ using shared_material = std::shared_ptr<Material>;
 
 struct ebo_t
 {
-    uint name;
+    unsigned int name;
     size_t count;
     int type;
     size_t offset;
@@ -21,15 +21,15 @@ struct Primitive
     Primitive(const tinygltf::Primitive& primitive, const tinygltf::Model& model, const std::vector<shared_material> materials);
     ~Primitive();
 
-    void draw();
+    void draw(const Program& program);
 
     bool m_is_indexed = false;
     ebo_t m_ebo;
 
-    uint m_vao = -1;
-    std::vector<uint> m_vbos;
+    unsigned int m_vao = -1;
+    std::vector<unsigned int> m_vbos;
 
-    uint m_mode;
+    unsigned int m_mode;
 
     shared_material m_material;
 };

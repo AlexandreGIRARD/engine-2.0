@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include "scene.hpp"
+#include "camera.hpp"
+#include "render_pass.hpp"
 #include "utils.hpp"
 #include "basic_pass.hpp"
 
@@ -30,8 +33,8 @@ bool Renderer::init_window(int major, int minor)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    uint width = 1920;
-    uint height = 1080;
+    unsigned int width = 1920;
+    unsigned int height = 1080;
     m_window = utils::init_window(width, height);
     glfwMakeContextCurrent(m_window);
 
@@ -42,7 +45,7 @@ bool Renderer::init_window(int major, int minor)
     }
 
     // Debug
-#if DEBUG
+#if _DEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(utils::debug_callback, 0);
 #endif
@@ -86,7 +89,7 @@ bool Renderer::init_pipeline()
 void Renderer::loop()
 {
     double xpos, ypos;
-    bool move_cursor;
+    bool move_cursor = true;
 
     // Render loop
     while(!glfwWindowShouldClose(m_window))
@@ -128,6 +131,6 @@ void Renderer::render_imgui()
 
 void Renderer::render(double xpos, double ypos)
 {
-    m_camera->update(m_window, , xpos, ypos);
+    //m_camera->update(m_window, m_delta, xpos, ypos);
     m_basic_pass->render(m_camera, m_scene);
 }

@@ -12,15 +12,15 @@ public:
     Material(const tinygltf::Material& material, const tinygltf::Model& model);
     ~Material();
 
-    void bind(Program& program);
+    void bind(const Program& program);
 private:
     glm::vec3 m_base_color_factor;
     double m_metallic_factor;
     double m_roughness_factor;
 
-    uint m_base_color;
-    uint m_metallic_roughness;
-    uint m_normal;
-    // uint m_emissive;
-    // uint m_ambient_occlusion;
+    unsigned int m_base_color;
+    unsigned int m_metallic_roughness;
+    unsigned int m_normal;
+    // unsigned int m_emissive;
+    // unsigned int m_ambient_occlusion;
 };

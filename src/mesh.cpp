@@ -13,9 +13,9 @@ static const GLenum modes[] = {
 };
 
 
-static uint gen_vbo(const tinygltf::Accessor& accessor, const tinygltf::Model& model, uint index)
+static unsigned int gen_vbo(const tinygltf::Accessor& accessor, const tinygltf::Model& model, unsigned int index)
 {
-    uint vbo;
+    unsigned int vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     
@@ -37,9 +37,9 @@ static uint gen_vbo(const tinygltf::Accessor& accessor, const tinygltf::Model& m
     return vbo;
 }
 
-static uint gen_ebo(const tinygltf::Accessor& accessor, const tinygltf::Model& model)
+static unsigned int gen_ebo(const tinygltf::Accessor& accessor, const tinygltf::Model& model)
 {
-    uint ebo;
+    unsigned int ebo;
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
@@ -93,8 +93,10 @@ Primitive::~Primitive()
     glDeleteBuffers(1, &m_ebo.name);
 }
 
-void Primitive::draw()
+void Primitive::draw(const Program& program)
 {
+    m_material->bind(program);
+
     glBindVertexArray(m_vao);
 
     if (m_is_indexed) {
@@ -121,6 +123,6 @@ void Mesh::draw(const Program& program, const glm::mat4& transform)
     program.addUniformMat4(transform, "model");
 
     for (auto primitive : m_primitives) {
-        primitive->draw();
+        primitive->draw(program);
     }
 }

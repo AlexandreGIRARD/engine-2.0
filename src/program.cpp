@@ -19,7 +19,7 @@ Program::~Program()
     glDeleteProgram(m_id_program);   
 }
 
-const bool Program::need_material_binding()
+const bool Program::need_material_binding() const
 {
     return m_material_binding;
 }
@@ -35,7 +35,7 @@ void Program::add_shader(const std::string& path, int shader_type)
     const char *code = tmp_string.c_str();
 
     // Create shader
-    uint id = glCreateShader(shader_type);
+    unsigned int id = glCreateShader(shader_type);
     glShaderSource(id, 1, &code, NULL);
     glCompileShader(id);
 
@@ -87,7 +87,7 @@ void Program::use()
     glUseProgram(m_id_program);
 }
 
-void Program::addUniformTexture(const uint unit, const char *name) const
+void Program::addUniformTexture(const unsigned int unit, const char *name) const
 {
     glUniform1i(glGetUniformLocation(m_id_program, name), unit);
 }
@@ -113,7 +113,7 @@ void Program::addUniformMat4(const glm::mat4& matrix, const char *name) const
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Program::addUniformUint(const uint val, const char* name) const
+void Program::addUniformUint(const unsigned int val, const char* name) const
 {
     glUniform1ui(glGetUniformLocation(m_id_program, name), val);
 }

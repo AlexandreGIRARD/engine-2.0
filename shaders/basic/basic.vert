@@ -17,7 +17,6 @@ out vec2 uv;
 
 void main()
 {
-    gl_Position = projection_view * model * vec4(pos, 1);
-    // gl_Position = model * vec4(pos, 1);
-    // gl_Position = vec4(pos, 1);
+    uv = texcoord_0;
+    gl_Position = projection_view * vec4(pos, 1);
 }

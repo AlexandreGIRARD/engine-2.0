@@ -9,9 +9,11 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-#include "scene.hpp"
-#include "camera.hpp"
-#include "render_pass.hpp"
+#include <memory>
+
+class Scene;
+class Camera;
+class Render_Pass;
 
 using shared_scene  = std::shared_ptr<Scene>;
 using shared_camera = std::shared_ptr<Camera>;
