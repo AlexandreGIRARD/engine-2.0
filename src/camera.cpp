@@ -6,10 +6,10 @@
 
 // default one
 Camera::Camera()
-    : m_position(0,-5,0)
+    : m_position(0,0,-5)
     , m_target(0,0,0)
-    , m_up(0,0,1)
-    , m_forward(0,1,0)
+    , m_up(0,1,0)
+    , m_forward(0,0,1)
     , m_right(- glm::cross(m_up, m_forward))
     , m_speed(5)
     , m_fov(45)
@@ -142,8 +142,9 @@ void Camera::set_right(glm::vec3 right)
     m_right = right;
 }
 
-void Camera::update(GLFWwindow *window, float delta, float mouse_x, float mouse_y)
+void Camera::update(GLFWwindow *window, float delta, float mouse_x, float mouse_y, bool move)
 {
+    m_move = move;
     // Keyboard events
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)  // W : forwards
     {
@@ -161,14 +162,30 @@ void Camera::update(GLFWwindow *window, float delta, float mouse_x, float mouse_
     {
         set_position(m_position + m_right * m_speed * delta);
     }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)  // E : Up
+    {
+        set_position(m_position + m_up * m_speed * delta);
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)  // Q : Down
+    {
+        set_position(m_position - m_up * m_speed * delta);
+    }
 
     // Mouse events
-    mouse_move(mouse_x, mouse_y);
+    mouse_move(window, mouse_x, mouse_y);
 }
 
-void Camera::mouse_move(double xpos, double ypos)
+void Camera::reset_mouse_pos()
 {
-    m_mouse_pos.x = xpos;
+    m_first_move = !m_first_move;
+}
+
+void Camera::mouse_move(GLFWwindow* window, double xpos, double ypos)
+{
+    if (!m_move)
+        return;
+        
+    m_mouse_pos.x = xpos;   
     m_mouse_pos.y = ypos;
 
     if (m_first_move)

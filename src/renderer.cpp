@@ -8,18 +8,39 @@
 #include "utils.hpp"
 #include "basic_pass.hpp"
 
+static bool camera_reset_pos;
+static bool move;
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+    {
+        camera_reset_pos = true;
+        move = true;
+    }
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
+    {
+        camera_reset_pos = false;
+        move = false;
+    }
+}
+
 Renderer::Renderer(int major, int minor, const char* path)
 {
     if (!init_window(major, minor))
         exit(1);
     init_imgui();
     init_pipeline();
-    m_scene = std::make_shared<Scene>(path);
-    m_camera = std::make_shared<Camera>();
+    m_scene = new Scene(path);
+    m_camera = new Camera();
 }
 
 Renderer::~Renderer()
 {
+    delete m_scene;
+    delete m_camera;
+    delete m_basic_pass;
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -58,8 +79,8 @@ bool Renderer::init_window(int major, int minor)
     glEnable(GL_DEPTH_TEST);
 
     // Mouse event setup
-    //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    //glfwSetMouseButtonCallback(window, mouse_button_callback); <-- setup func in utils.hpp
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetMouseButtonCallback(m_window, mouse_button_callback); //<-- setup func in utils.hpp
 
     return m_window != nullptr;
 }
@@ -82,7 +103,7 @@ bool Renderer::init_imgui()
 
 bool Renderer::init_pipeline()
 {
-    m_basic_pass = std::make_shared<Basic_Pass>();
+    m_basic_pass = new Basic_Pass();
     return true;
 }
 
@@ -107,8 +128,7 @@ void Renderer::loop()
         utils::frame_rate(m_time);
 
         // Get mouse event (position variations)
-        if (move_cursor)
-            glfwGetCursorPos(m_window, &xpos, &ypos);
+        glfwGetCursorPos(m_window, &xpos, &ypos);
 
         render(xpos, ypos);
 
@@ -131,6 +151,10 @@ void Renderer::render_imgui()
 
 void Renderer::render(double xpos, double ypos)
 {
-    //m_camera->update(m_window, m_delta, xpos, ypos);
+    if (camera_reset_pos) {
+        m_camera->reset_mouse_pos();
+        camera_reset_pos = false;
+    }
+    m_camera->update(m_window, m_delta, xpos, ypos, move);
     m_basic_pass->render(m_camera, m_scene);
 }

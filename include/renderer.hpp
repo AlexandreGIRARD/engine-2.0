@@ -33,8 +33,8 @@ private:
     void render_imgui();
     void render(double xpos, double ypos);
 
-    shared_scene  m_scene;
-    shared_camera m_camera;
+    Scene*  m_scene;
+    Camera* m_camera;
 
     GLFWwindow* m_window;
 
@@ -42,5 +42,5 @@ private:
     double m_delta;
 
     // Pass
-    shared_pass m_basic_pass;
+    Render_Pass* m_basic_pass;
 };

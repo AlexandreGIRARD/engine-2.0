@@ -33,9 +33,10 @@ public:
     void set_up(glm::vec3 up);
     void set_forward(glm::vec3 forward);
     void set_right(glm::vec3 right);
+    void reset_mouse_pos();
 
-    void update(GLFWwindow *window, float delta, float mouse_x, float mouse_y);
-    void mouse_move(double xpos, double ypos);
+    void update(GLFWwindow *window, float delta, float mouse_x, float mouse_y, bool cam_state);
+    void mouse_move(GLFWwindow* window, double xpos, double ypos);
     void invert_pitch();
 
 private:
@@ -57,5 +58,6 @@ private:
     glm::vec2 m_last_mouse_pos;
     glm::vec2 m_mouse_pos;
     bool m_first_move = true;
+    bool m_move       = false;
     float m_sensitivity = 0.1f;
 };

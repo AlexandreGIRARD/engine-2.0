@@ -13,7 +13,7 @@ Basic_Pass::Basic_Pass()
 Basic_Pass::~Basic_Pass()
 {}
 
-void Basic_Pass::render(shared_camera camera, shared_scene scene)
+void Basic_Pass::render(Camera* camera, Scene* scene)
 {
     m_program.use();
     glm::mat4 projection_view = camera->get_projection() * camera->look_at();
