@@ -32,6 +32,7 @@ add_executable(engine
     src/program.cpp
     src/renderer.cpp
     src/basic_pass.cpp
+    src/texture.cpp
 
     src/imgui/imgui.cpp
     src/imgui/imgui_demo.cpp

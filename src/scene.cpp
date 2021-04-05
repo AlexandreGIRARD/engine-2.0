@@ -36,8 +36,11 @@ Scene::Scene(const char* path)
     std::string err;
     std::string warn;
 
-    loader.LoadBinaryFromFile(&model, &err, &warn, path);
-
+    if (std::string(path).find(".glb") != std::string::npos)
+        loader.LoadBinaryFromFile(&model, &err, &warn, path);
+    else
+        loader.LoadASCIIFromFile(&model, &err, &warn, path);
+        
     if (!warn.empty()) {
         printf("Warn: %s\n", warn.c_str());
     }

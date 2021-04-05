@@ -130,7 +130,14 @@ void Renderer::loop()
         // Get mouse event (position variations)
         glfwGetCursorPos(m_window, &xpos, &ypos);
 
+        // UI update
+        update_imgui();
+
         render(xpos, ypos);
+
+        // Render dear imgui into screen
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Check and call events
         glfwSwapBuffers(m_window);
@@ -138,15 +145,22 @@ void Renderer::loop()
     }
 }
 
-void Renderer::render_imgui()
+void Renderer::update_imgui()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    // // Render dear imgui into screen
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui::Begin("PBR-Engine");
+    // Change camera settings
+    if (ImGui::TreeNode("Camera"))
+    {
+        ImGui::SliderFloat("Fov", m_camera->get_fov(), 30.f, 120.f);
+        ImGui::SliderFloat("Near Plane", m_camera->get_near(), 0.0001f, 0.1f);
+        ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
+        ImGui::TreePop();
+    }
+    ImGui::End();
 }
 
 void Renderer::render(double xpos, double ypos)

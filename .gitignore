@@ -2,3 +2,5 @@
 build/
 engine*
 imgui.ini
+resources/gltf
+

@@ -102,9 +102,24 @@ glm::vec3 Camera::get_right()
     return m_right;
 }
 
+float* Camera::get_fov()
+{
+    return &m_fov;
+}
+
+float* Camera::get_near()
+{
+    return &m_near;
+}
+
+float* Camera::get_far()
+{
+    return &m_far;
+}
+
 glm::mat4 Camera::get_projection()
 {
-    return m_projection;
+    return glm::perspective(glm::radians(m_fov), 1920/1080.f, m_near, m_far);
 }
 
 void Camera::set_speed(float speed)

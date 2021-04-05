@@ -25,6 +25,9 @@ public:
     glm::vec3 get_forward();
     glm::vec3 get_right();
     glm::mat4 get_projection();
+    float* get_fov();
+    float* get_near();
+    float* get_far();
 
     void set_speed(float speed);
     void set_position(glm::vec3 position);

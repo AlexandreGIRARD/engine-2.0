@@ -4,6 +4,7 @@
 #include <tiny_gltf.h>
 #include <glm/glm.hpp>
 
+class Texture;
 class Program;
 
 class Material
@@ -18,9 +19,9 @@ private:
     double m_metallic_factor;
     double m_roughness_factor;
 
-    unsigned int m_base_color;
-    unsigned int m_metallic_roughness;
-    unsigned int m_normal;
-    // unsigned int m_emissive;
-    // unsigned int m_ambient_occlusion;
+    Texture* m_base_color = nullptr;
+    Texture* m_metallic_roughness = nullptr;
+    Texture* m_normal = nullptr;
+    // Texture* m_emissive;
+    // Texture* m_ambient_occlusion;
 };

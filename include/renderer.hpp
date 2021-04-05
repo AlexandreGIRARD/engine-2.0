@@ -30,6 +30,7 @@ private:
     bool init_window(int major, int minor);
     bool init_imgui();
     bool init_pipeline();
+    void update_imgui();
     void render_imgui();
     void render(double xpos, double ypos);
 

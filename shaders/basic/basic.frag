@@ -11,5 +11,5 @@ out vec4 color;
 
 void main()
 {
-    color = texture(base_color, vec2(uv.x,1.-uv.y));
+    color = texture(base_color, uv);//vec2(uv.x,1.-uv.y));
 }
