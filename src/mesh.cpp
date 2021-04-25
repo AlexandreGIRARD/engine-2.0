@@ -93,7 +93,7 @@ Primitive::~Primitive()
     glDeleteBuffers(1, &m_ebo.name);
 }
 
-void Primitive::draw(const Program& program)
+void Primitive::draw(const shared_program program)
 {
     m_material->bind(program);
 
@@ -118,9 +118,9 @@ Mesh::Mesh(const tinygltf::Mesh& mesh, const tinygltf::Model& model, const std::
 Mesh::~Mesh()
 {}
 
-void Mesh::draw(const Program& program, const glm::mat4& transform)
+void Mesh::draw(const shared_program program, const glm::mat4& transform)
 {
-    program.addUniformMat4(transform, "model");
+    program->addUniformMat4(transform, "model");
 
     for (auto primitive : m_primitives) {
         primitive->draw(program);

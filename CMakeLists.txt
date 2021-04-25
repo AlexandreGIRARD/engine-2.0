@@ -19,6 +19,7 @@ include_directories(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/imgui)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/glfw)
 
+
 add_executable(engine 
     src/main.cpp
     src/utils.cpp
@@ -33,6 +34,8 @@ add_executable(engine
     src/renderer.cpp
     src/basic_pass.cpp
     src/texture.cpp
+    src/g_buffer_pass.cpp
+    src/fbo.cpp
 
     src/imgui/imgui.cpp
     src/imgui/imgui_demo.cpp

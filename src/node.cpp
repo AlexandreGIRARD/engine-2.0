@@ -61,7 +61,7 @@ void Node::process_mesh(tinygltf::Node& node, std::vector<shared_mesh> meshes)
     m_mesh = meshes[node.mesh];
 }
 
-void Node::draw(const Program& program, glm::mat4 transform)
+void Node::draw(const shared_program program, glm::mat4 transform)
 {
     glm::mat4 new_transform = transform * m_transform;
     if (m_mesh)

@@ -21,7 +21,9 @@ public:
     void addUniformVec4(const glm::vec4& vector, const char *name) const;
     void addUniformTexture(const unsigned int unit, const char *name) const;
     void addUniformFloat(const float val, const char* name) const;
+    void addUniformDouble(const double val, const char* name) const;
     void addUniformUint(const unsigned int val, const char* name) const;
+    void addUniformBool(const bool val, const char* name) const;
 
 private:
         unsigned int m_id_program;

@@ -52,7 +52,7 @@ Scene::Scene(const char* path)
     create_scene(model);
 }
 
-void Scene::draw(const Program& program)
+void Scene::draw(const shared_program program)
 {
     for (auto node : m_nodes)
         node->draw(program);

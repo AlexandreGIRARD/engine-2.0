@@ -7,6 +7,7 @@
 #include "light.hpp"
 #include "program.hpp"
 
+using shared_program = std::shared_ptr<Program>;
 using shared_node = std::shared_ptr<Node>;
 using shared_material = std::shared_ptr<Material>;
 using shared_light = std::shared_ptr<Light>;
@@ -18,7 +19,7 @@ public:
     Scene(){}
     Scene(const char* path);
 
-    void draw(const Program& program);
+    void draw(const shared_program program);
 
 private:
     bool create_scene(tinygltf::Model& model);

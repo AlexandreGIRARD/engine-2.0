@@ -6,6 +6,7 @@
 #include "material.hpp"
 #include "program.hpp"
 
+using shared_program = std::shared_ptr<Program>;
 using shared_material = std::shared_ptr<Material>;
 
 struct ebo_t
@@ -21,7 +22,7 @@ struct Primitive
     Primitive(const tinygltf::Primitive& primitive, const tinygltf::Model& model, const std::vector<shared_material> materials);
     ~Primitive();
 
-    void draw(const Program& program);
+    void draw(const shared_program program);
 
     bool m_is_indexed = false;
     ebo_t m_ebo;
@@ -40,7 +41,7 @@ public:
     Mesh(const tinygltf::Mesh& mesh, const tinygltf::Model& model, const std::vector<shared_material> materials);
     ~Mesh();
 
-    void draw(const Program& program, const glm::mat4& transform);
+    void draw(const shared_program program, const glm::mat4& transform);
 
 private:
     std::vector<std::shared_ptr<Primitive>> m_primitives;

@@ -122,3 +122,13 @@ void Program::addUniformFloat(const float val, const char* name) const
 {
     glUniform1f(glGetUniformLocation(m_id_program, name), val);
 }
+
+void Program::addUniformDouble(const double val, const char* name) const
+{
+    glUniform1d(glGetUniformLocation(m_id_program, name), val);
+}
+
+void Program::addUniformBool(const bool val, const char* name) const
+{
+    glUniform1i(glGetUniformLocation(m_id_program, name), val);
+}

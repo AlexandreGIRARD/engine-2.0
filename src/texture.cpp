@@ -19,6 +19,7 @@ Texture::Texture(const tinygltf::Texture& tex, int tex_coord, const tinygltf::Mo
 
     int width, height, nb_channels;
     tinygltf::Image image = model.images[model.textures[tex.source].source];
+    
 
     width  = image.width;
     height = image.height;
@@ -38,9 +39,9 @@ Texture::~Texture()
     glDeleteTextures(1, &m_id);
 }
 
-void Texture::bind(const Program& program, unsigned int location, const char* name)
+void Texture::bind(const shared_program program, unsigned int location, const char* name)
 {
-    program.addUniformTexture(location, name);
+    program->addUniformTexture(location, name);
     glActiveTexture(GL_TEXTURE0 + location);
     glBindTexture(GL_TEXTURE_2D, m_id);
 }
