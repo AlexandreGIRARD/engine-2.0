@@ -6,24 +6,26 @@
 #include "program.hpp"
 #include "camera.hpp"
 #include "scene.hpp"
+#include "fbo.hpp"
 
-using shared_camera = std::shared_ptr<Camera>;
-using shared_scene  = std::shared_ptr<Scene>;
+using shared_camera  = std::shared_ptr<Camera>;
+using shared_scene   = std::shared_ptr<Scene>;
+using shared_fbo     = std::shared_ptr<FBO>;
+using shared_program = std::shared_ptr<Program>;
 
 class Render_Pass
 {
 public:
     Render_Pass(bool bind_material)
-        : m_program(bind_material)
-    {}
+    {
+        m_program = std::make_shared<Program>(bind_material);
+        m_fbo     = std::make_shared<FBO>();
+    }
     ~Render_Pass()
     {}
 
     virtual void render(Camera* camera, Scene* scene) = 0;
-    virtual void set_attachments() = 0;
-    virtual void link_attachments(std::vector<unsigned int> attachments) = 0;
-    std::vector<unsigned int> get_attachments() { return m_attachments; }
 protected:
-    std::vector<unsigned int> m_attachments;
-    Program m_program;
+    shared_program m_program;
+    shared_fbo     m_fbo;
 };
