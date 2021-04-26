@@ -42,6 +42,11 @@ private:
     double m_time;
     double m_delta;
 
+    unsigned int m_width;
+    unsigned int m_height;
+
     // Pass
     Render_Pass* m_basic_pass;
+    Render_Pass* m_gbuffer_pass;
+    Render_Pass* m_deferred_pass;
 };

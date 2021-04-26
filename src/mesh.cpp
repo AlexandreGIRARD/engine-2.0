@@ -121,6 +121,7 @@ Mesh::~Mesh()
 void Mesh::draw(const shared_program program, const glm::mat4& transform)
 {
     program->addUniformMat4(transform, "model");
+    program->addUniformMat4(glm::transpose(glm::inverse(transform)), "normal_matrix");
 
     for (auto primitive : m_primitives) {
         primitive->draw(program);

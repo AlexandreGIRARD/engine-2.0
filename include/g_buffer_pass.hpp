@@ -11,8 +11,10 @@ public :
 
     void render(Camera* camera, Scene* scene) override;
 
+    unsigned int* m_buffers;
+
     shared_attachment m_attach_position; // Position Attachment - World Space
-    shared_attachment m_attach_albedo; // Albedo Attachment
+    shared_attachment m_attach_base_color; // Albedo Attachment
     shared_attachment m_attach_orm; // Ambient Occlusion Metallic Roughness  Attachment
     shared_attachment m_attach_emissive; // Emissive Attachment
     shared_attachment m_attach_normal; // Normal Attachment - World Space

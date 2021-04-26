@@ -18,7 +18,7 @@ out VS_OUT
     mat3 TBN;
 } vs_out;
 
-uniform mat4 projection_view_model;
+uniform mat4 projection_view;
 uniform mat4 model;
 uniform mat4 normal_matrix;
 
@@ -26,7 +26,7 @@ void main()
 {
     vs_out.pos = model * vec4(pos, 1.0);
     vs_out.uv = texcoord_0;
-    
+
     // TBN
     vec3 T = normal_matrix * tangent;
     vs_out.normal = normal_matrix * normal;
@@ -34,5 +34,5 @@ void main()
 
     vs_out.TBN = mat3(T, B, vs_out.normal);
 
-    gl_Position = projection_view_model * vec4(pos, 1.0);
+    gl_Position = projection_view * model * vec4(pos, 1.0);
 }

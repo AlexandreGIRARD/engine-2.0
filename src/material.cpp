@@ -57,6 +57,7 @@ void Material::bind(const shared_program program)
     program->addUniformVec3(m_emissive_factor, "emissive_factor");
     program->addUniformDouble(m_metallic_factor, "metallic_factor");
     program->addUniformDouble(m_roughness_factor, "roughness_factor");
+    program->addUniformDouble(m_occlusion_factor, "occlusion_factor");
 
     // Bind textures information
     program->addUniformBool(m_has_base_color_tex, "has_base_color_tex");
@@ -67,13 +68,13 @@ void Material::bind(const shared_program program)
 
     // Bind textures
     if (m_base_color)
-        m_base_color->bind(program, 0, "base_color");
+        m_base_color->bind(program, 0, "base_color_tex");
     if (m_metallic_roughness)
-        m_metallic_roughness->bind(program, 1, "metallic_roughness");
+        m_metallic_roughness->bind(program, 1, "metallic_roughness_tex");
     if (m_normal)
-        m_normal->bind(program, 2, "normal");
+        m_normal->bind(program, 2, "normal_tex");
     if (m_emissive)
-        m_emissive->bind(program, 3, "emissive");
+        m_emissive->bind(program, 3, "emissive_tex");
     if (m_occlusion)
-        m_occlusion->bind(program, 4 ,"occlusion");
+        m_occlusion->bind(program, 4 ,"occlusion_tex");
 }

@@ -35,6 +35,7 @@ add_executable(engine
     src/basic_pass.cpp
     src/texture.cpp
     src/g_buffer_pass.cpp
+    src/deferred_pass.cpp
     src/fbo.cpp
 
     src/imgui/imgui.cpp

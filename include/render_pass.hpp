@@ -25,6 +25,9 @@ public:
     {}
 
     virtual void render(Camera* camera, Scene* scene) = 0;
+
+    const shared_fbo get_fbo() { return m_fbo; }
+
 protected:
     shared_program m_program;
     shared_fbo     m_fbo;

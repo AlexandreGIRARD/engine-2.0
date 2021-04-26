@@ -6,7 +6,8 @@
 #include "camera.hpp"
 #include "render_pass.hpp"
 #include "utils.hpp"
-#include "basic_pass.hpp"
+#include "g_buffer_pass.hpp"
+#include "deferred_pass.hpp"
 
 static bool camera_reset_pos;
 static bool move;
@@ -54,9 +55,9 @@ bool Renderer::init_window(int major, int minor)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    unsigned int width = 1920;
-    unsigned int height = 1080;
-    m_window = utils::init_window(width, height);
+    m_width = 1920;
+    m_height = 1080;
+    m_window = utils::init_window(m_width, m_height);
     glfwMakeContextCurrent(m_window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -72,7 +73,7 @@ bool Renderer::init_window(int major, int minor)
 #endif
 
     // Tell OpenGL window size
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, m_width, m_height);
     glfwSetFramebufferSizeCallback(m_window, utils::framebuffer_size_callback);
 
     // Enable z-buffer computation
@@ -103,7 +104,8 @@ bool Renderer::init_imgui()
 
 bool Renderer::init_pipeline()
 {
-    m_basic_pass = new Basic_Pass();
+    m_gbuffer_pass = new G_Buffer_Pass(m_width, m_height);
+    m_deferred_pass = new Deferred_Pass(m_width, m_height);
     return true;
 }
 
@@ -170,5 +172,7 @@ void Renderer::render(double xpos, double ypos)
         camera_reset_pos = false;
     }
     m_camera->update(m_window, m_delta, xpos, ypos, move);
-    m_basic_pass->render(m_camera, m_scene);
+    m_gbuffer_pass->render(m_camera, m_scene);
+
+    m_deferred_pass
 }
