@@ -28,13 +28,18 @@ G_Buffer_Pass::G_Buffer_Pass(unsigned int width, unsigned int height)
     m_fbo->set_attachment(m_attach_depth, GL_DEPTH_ATTACHMENT);
     m_fbo->unbind();
 
-    m_buffers = new unsigned int[5]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT5};
+    m_buffers = new unsigned int[5]{GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4};
 }
 
 G_Buffer_Pass::~G_Buffer_Pass()
 {
     delete[] m_buffers;
 }
+
+ const std::vector<shared_attachment> G_Buffer_Pass::get_attachments()
+ {
+     return std::vector<shared_attachment>{m_attach_position, m_attach_base_color, m_attach_orm, m_attach_emissive, m_attach_normal};
+ } 
 
 void G_Buffer_Pass::render(Camera* camera, Scene* scene)
 {

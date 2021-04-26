@@ -28,9 +28,10 @@ layout (binding = 4) uniform sampler2D normal_tex;
 
 in vec2 frag_uv;
 
-layout (location = 0) out vec4 output;
+// Output Attachment
+layout (location = 0) out vec4 deferred_output;
 
 void main()
 {
-    output = texture(normal_tex, frag_uv);
+    deferred_output = texture(normal_tex, frag_uv).rgba;
 }

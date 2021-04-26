@@ -13,11 +13,11 @@
 
 class Scene;
 class Camera;
-class Render_Pass;
+class G_Buffer_Pass;
+class Deferred_Pass;
 
 using shared_scene  = std::shared_ptr<Scene>;
 using shared_camera = std::shared_ptr<Camera>;
-using shared_pass   = std::shared_ptr<Render_Pass>;
 
 class Renderer
 {
@@ -46,7 +46,6 @@ private:
     unsigned int m_height;
 
     // Pass
-    Render_Pass* m_basic_pass;
-    Render_Pass* m_gbuffer_pass;
-    Render_Pass* m_deferred_pass;
+    G_Buffer_Pass* m_gbuffer_pass;
+    Deferred_Pass* m_deferred_pass;
 };

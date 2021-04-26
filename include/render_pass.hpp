@@ -25,6 +25,7 @@ public:
     {}
 
     virtual void render(Camera* camera, Scene* scene) = 0;
+    virtual const std::vector<shared_attachment> get_attachments() = 0;
 
     const shared_fbo get_fbo() { return m_fbo; }
 

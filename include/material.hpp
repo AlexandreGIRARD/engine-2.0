@@ -25,8 +25,8 @@ private:
     // Metallic Roughness
     Texture* m_metallic_roughness = nullptr;
     bool m_has_metallic_roughness_tex = false;
-    double m_metallic_factor;
-    double m_roughness_factor;
+    float m_metallic_factor;
+    float m_roughness_factor;
     
     // Normal
     Texture* m_normal = nullptr;
@@ -40,5 +40,5 @@ private:
     // Occlusion
     Texture* m_occlusion = nullptr;
     bool m_has_occlusion_tex = false;
-    double m_occlusion_factor = 1.f;
+    float m_occlusion_factor = 1.f;
 };

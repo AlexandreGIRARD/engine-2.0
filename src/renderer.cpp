@@ -40,7 +40,6 @@ Renderer::~Renderer()
 {
     delete m_scene;
     delete m_camera;
-    delete m_basic_pass;
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -172,7 +171,14 @@ void Renderer::render(double xpos, double ypos)
         camera_reset_pos = false;
     }
     m_camera->update(m_window, m_delta, xpos, ypos, move);
+    // G-Buffer Pass    
     m_gbuffer_pass->render(m_camera, m_scene);
 
-    m_deferred_pass
+    // Final Deferred Pass
+    m_deferred_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
+    m_deferred_pass->render(m_camera, m_scene);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_deferred_pass->get_fbo()->get_name());
+    glBlitFramebuffer(0, 0, 1920, 1080, 0, 0, 1920, 1080, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

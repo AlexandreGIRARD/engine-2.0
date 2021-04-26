@@ -20,3 +20,8 @@ void Basic_Pass::render(Camera* camera, Scene* scene)
     m_program->addUniformMat4(projection_view, "projection_view");
     scene->draw(m_program);
 }
+
+const std::vector<shared_attachment> Basic_Pass::get_attachments()
+{
+    return std::vector<shared_attachment>();
+}    

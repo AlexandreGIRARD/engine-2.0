@@ -28,8 +28,8 @@ void main()
     vs_out.uv = texcoord_0;
 
     // TBN
-    vec3 T = normal_matrix * tangent;
-    vs_out.normal = normal_matrix * normal;
+    vec3 T = vec3(normal_matrix * vec4(tangent, 1.0));
+    vs_out.normal = vec3(normal_matrix * vec4(normal, 1.0));
     vec3 B = cross(vs_out.normal, T);
 
     vs_out.TBN = mat3(T, B, vs_out.normal);

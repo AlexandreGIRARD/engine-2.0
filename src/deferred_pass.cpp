@@ -16,12 +16,20 @@ Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
     // Init framebuffer
     m_fbo->bind();
     m_fbo->set_attachment(m_attach_output, GL_COLOR_ATTACHMENT0);
+
+    // Init Screen-Quad
+    set_screen_quad();
 }
 
 Deferred_Pass::~Deferred_Pass()
 {
     glDeleteBuffers(1, &m_quad_vao);
     glDeleteVertexArrays(1, &m_quad_vao);
+}
+
+const std::vector<shared_attachment> Deferred_Pass::get_attachments()
+{
+    return std::vector<shared_attachment>{m_attach_output};
 }
 
 void Deferred_Pass::set_screen_quad()
@@ -78,7 +86,7 @@ void Deferred_Pass::render(Camera* camera, Scene* scene)
     render_screen_quad();
 }
 
-void Deferred_Pass::set_gbuffer_attachments(const shared_attachment g_buffer_attachments[5])
+void Deferred_Pass::set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attachments)
 {
     m_program->use();
 

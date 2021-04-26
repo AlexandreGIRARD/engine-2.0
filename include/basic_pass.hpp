@@ -9,4 +9,5 @@ public:
     ~Basic_Pass();
 
     void render(Camera* camera, Scene* scene) override;
+    const std::vector<shared_attachment> get_attachments() override;
 };
