@@ -23,10 +23,12 @@ public:
 
 private:
     bool create_scene(tinygltf::Model& model);
+    void init_lights(tinygltf::Model& model, tinygltf::Scene& scene);
 
 
     std::vector<shared_material> m_materials;
     std::vector<shared_mesh>     m_meshes;
     std::vector<shared_node>     m_nodes;
-    std::vector<shared_light>    m_lights;
+    std::vector<shared_light>    m_lights; // Only Point/Spot
+    shared_light                 m_sun_light;
 };
