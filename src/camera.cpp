@@ -209,8 +209,8 @@ void Camera::mouse_move(GLFWwindow* window, double xpos, double ypos)
         m_first_move = false;
     }
 
-    float offset_x = xpos - m_last_mouse_pos.x;
-    float offset_y = m_last_mouse_pos.y - ypos;
+    float offset_x = xpos - m_last_mouse_pos.x + 0.0001;
+    float offset_y = m_last_mouse_pos.y - ypos + 0.0001;
 
     m_last_mouse_pos = glm::vec2(xpos, ypos);
 

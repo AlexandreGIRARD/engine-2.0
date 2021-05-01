@@ -31,7 +31,7 @@ void Scene::init_lights(tinygltf::Model& model, tinygltf::Scene& scene)
         }
         else
         {
-            glm::quat quat = glm::quat(current_node.rotation[0], current_node.rotation[1], current_node.rotation[2], current_node.rotation[3]);
+            glm::quat quat = glm::quat(current_node.rotation[3], current_node.rotation[0], current_node.rotation[1], current_node.rotation[2]);
             glm::mat4 rotation_matrix = glm::mat4_cast(quat);
             glm::vec4 direction = rotation_matrix * glm::vec4{0.f,0.f,-1.f,0.f};
 

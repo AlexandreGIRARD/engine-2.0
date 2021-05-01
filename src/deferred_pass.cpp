@@ -91,7 +91,8 @@ void Deferred_Pass::set_lights(std::vector<shared_light> lights)
 {
     m_program->use();
 
-    int id_point_light, id_spot_light = 0;
+    int id_point_light = 0;
+    int id_spot_light  = 0;
     for (auto light : lights)
     {
         switch (light->get_type())

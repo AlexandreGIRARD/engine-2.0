@@ -66,7 +66,7 @@ bool Renderer::init_window(int major, int minor)
     }
 
     // Debug
-#if _DEBUG
+#ifdef DEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(utils::debug_callback, 0);
 #endif
@@ -105,6 +105,7 @@ bool Renderer::init_pipeline()
 {
     m_gbuffer_pass = new G_Buffer_Pass(m_width, m_height);
     m_deferred_pass = new Deferred_Pass(m_width, m_height);
+    // m_envmap_pass = new EnvMap_Pass();
     return true;
 }
 
@@ -161,6 +162,11 @@ void Renderer::update_imgui()
         ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
         ImGui::TreePop();
     }
+
+    if (ImGui::TreeNode("FX"))
+    {
+        ImGui::TreePop();
+    }
     ImGui::End();
 }
 
@@ -171,6 +177,7 @@ void Renderer::render(double xpos, double ypos)
         camera_reset_pos = false;
     }
     m_camera->update(m_window, m_delta, xpos, ypos, move);
+
     // G-Buffer Pass    
     m_gbuffer_pass->render(m_camera, m_scene);
 

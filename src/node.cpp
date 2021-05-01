@@ -41,7 +41,7 @@ void Node::process_transform(tinygltf::Node& node)
         
         auto node_R = node.rotation;
         if (!node_R.empty()) {
-            glm::quat quat = glm::quat(node_R[0], node_R[1], node_R[2], node_R[3]);
+            glm::quat quat = glm::quat(node_R[3], node_R[0], node_R[1], node_R[2]);
             R = glm::mat4_cast(quat);
         }
 
