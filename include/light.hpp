@@ -24,19 +24,19 @@ public:
 
     const Light_Type get_type() { return m_type; }
 
-    void bind(shared_program& program);
+    void bind(shared_program& program, const int id);
 
     void set_direction(const glm::vec3& direction) { m_direction = direction; }
     void set_position(const glm::vec3& position) { m_position = position; }
 private:
     Light_Type m_type;
     glm::vec3 m_color;
-    double m_intensity;
-    double m_range;
+    float m_intensity;
+    float m_range;
 
     // Spot exclusive
-    double m_inner_angle;
-    double m_outer_angle;
+    float m_inner_angle;
+    float m_outer_angle;
 
     // Spot/Directional
     glm::vec3 m_direction;

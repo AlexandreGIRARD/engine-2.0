@@ -23,6 +23,7 @@ public:
     void addUniformFloat(const float val, const char* name) const;
     void addUniformDouble(const double val, const char* name) const;
     void addUniformUint(const unsigned int val, const char* name) const;
+    void addUniformInt(const int val, const char* name) const;
     void addUniformBool(const bool val, const char* name) const;
 
 private:

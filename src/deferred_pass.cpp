@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include "light.hpp"
+
 Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
     : Render_Pass(false)    
 {
@@ -80,10 +82,33 @@ void Deferred_Pass::render_screen_quad()
 void Deferred_Pass::render(Camera* camera, Scene* scene)
 {
     m_program->use();
-    glm::mat4 projection_view = camera->get_projection() * camera->look_at();
-    glm::mat4 view = camera->look_at();
-    m_program->addUniformMat4(projection_view, "projection_view");
+    glm::vec3 cam_pos = camera->get_position();
+    m_program->addUniformVec3(cam_pos, "cam_pos");
     render_screen_quad();
+}
+
+void Deferred_Pass::set_lights(std::vector<shared_light> lights)
+{
+    m_program->use();
+
+    int id_point_light, id_spot_light = 0;
+    for (auto light : lights)
+    {
+        switch (light->get_type())
+        {
+        case Light_Type::POINT:
+            light->bind(m_program, id_point_light++);
+            break;
+        case Light_Type::SPOT:
+            light->bind(m_program, id_spot_light++);
+        default:
+            light->bind(m_program, 0);
+            break;
+        }
+    }
+
+    m_program->addUniformInt(id_point_light, "nb_point_lights");
+    m_program->addUniformInt(id_spot_light, "nb_spot_light");
 }
 
 void Deferred_Pass::set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attachments)

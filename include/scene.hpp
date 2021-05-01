@@ -21,6 +21,9 @@ public:
 
     void draw(const shared_program program);
 
+    std::vector<shared_light> get_lights();
+    shared_light get_sunlight();
+
 private:
     bool create_scene(tinygltf::Model& model);
     void init_lights(tinygltf::Model& model, tinygltf::Scene& scene);

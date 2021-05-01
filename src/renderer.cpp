@@ -174,7 +174,12 @@ void Renderer::render(double xpos, double ypos)
     // G-Buffer Pass    
     m_gbuffer_pass->render(m_camera, m_scene);
 
+    // Occlusion Pass
+
+    // CSM Pass
+
     // Final Deferred Pass
+    m_deferred_pass->set_lights(m_scene->get_lights());
     m_deferred_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
     m_deferred_pass->render(m_camera, m_scene);
 

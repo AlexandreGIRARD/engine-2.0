@@ -2,6 +2,9 @@
 
 #include "render_pass.hpp"
 
+class Light;
+using shared_light = std::shared_ptr<Light>;
+
 class Deferred_Pass : public Render_Pass
 {
 public:
@@ -11,6 +14,8 @@ public:
     void render(Camera* camera, Scene* scene) override;
     const std::vector<shared_attachment> get_attachments() override;
 
+
+    void set_lights(std::vector<shared_light> lights);
     void set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attchments);
     void set_ssao_attachment(const shared_attachment occlusion_attachment);
 

@@ -118,6 +118,11 @@ void Program::addUniformUint(const unsigned int val, const char* name) const
     glUniform1ui(glGetUniformLocation(m_id_program, name), val);
 }
 
+void Program::addUniformInt(const int val, const char* name) const
+{
+    glUniform1i(glGetUniformLocation(m_id_program, name), val);
+}
+
 void Program::addUniformFloat(const float val, const char* name) const
 {
     glUniform1f(glGetUniformLocation(m_id_program, name), val);
