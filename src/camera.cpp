@@ -192,7 +192,7 @@ void Camera::update(GLFWwindow *window, float delta, float mouse_x, float mouse_
 
 void Camera::reset_mouse_pos()
 {
-    m_first_move = !m_first_move;
+    m_first_move = true;
 }
 
 void Camera::mouse_move(GLFWwindow* window, double xpos, double ypos)
