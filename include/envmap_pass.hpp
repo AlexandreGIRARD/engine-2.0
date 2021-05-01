@@ -14,6 +14,7 @@ public:
     const std::vector<shared_attachment> get_attachments() override;
 
     void init_env_maps(const std::string& file_path, const int id);
+    const int get_current_hdr_map() { return m_hdr_id; }
 
     shared_attachment m_attach_skybox;
     shared_attachment m_attach_irradiance;
@@ -30,8 +31,8 @@ private:
     void render_specular();
 
     // HDRI texture
-    int      m_hdr_id;
-    Texture* m_hdr_tex;
+    int      m_hdr_id  = -1;
+    Texture* m_hdr_tex = nullptr;
 
     // Cube info
     unsigned int m_cube_vao;

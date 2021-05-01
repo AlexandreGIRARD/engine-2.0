@@ -128,15 +128,16 @@ const std::vector<shared_attachment> EnvMap_Pass::get_attachments()
 
 void EnvMap_Pass::init_env_maps(const std::string& file_path, const int id)
 {
-    delete m_hdr_tex;
+    if (m_hdr_tex)
+        delete m_hdr_tex;
 
     // Load new HDRI map
-    m_hdr_tex = new Texture(file_path, true);
+    m_hdr_tex = new Texture(("resources/hdri/" + file_path+ ".hdr"), true);
     m_hdr_id = id;
 
     render_skybox();
-    render_irradiance();
-    render_specular();
+    // render_irradiance();
+    // render_specular();
 }
 
 void EnvMap_Pass::bind_matrices(shared_program program)

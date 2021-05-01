@@ -8,7 +8,7 @@ uniform mat4 views[6];
 
 in vec3 world_pos[];
 
-out pos;
+out vec3 pos;
 
 void main()
 {

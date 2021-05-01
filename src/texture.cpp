@@ -19,6 +19,8 @@ Texture::Texture(const std::string& file_path, bool as_float)
     void* data;
     GLenum internal_format, format, type;
 
+    stbi_set_flip_vertically_on_load(true);
+
     if (as_float)
     {
         data = stbi_loadf(file_path.c_str(), &width, &height, &nb_channels, 0);

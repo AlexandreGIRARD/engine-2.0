@@ -8,6 +8,7 @@
 #include "utils.hpp"
 #include "g_buffer_pass.hpp"
 #include "deferred_pass.hpp"
+#include "envmap_pass.hpp"
 
 static bool camera_reset_pos;
 static bool move;
@@ -105,7 +106,7 @@ bool Renderer::init_pipeline()
 {
     m_gbuffer_pass = new G_Buffer_Pass(m_width, m_height);
     m_deferred_pass = new Deferred_Pass(m_width, m_height);
-    // m_envmap_pass = new EnvMap_Pass();
+    m_envmap_pass = new EnvMap_Pass();
     return true;
 }
 
@@ -162,10 +163,7 @@ void Renderer::update_imgui()
         ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
         ImGui::TreePop();
     }
-    if (ImGui::TreeNode("Environment Map"))
-    {
-        ImGui::TreePop();
-    }
+    ImGui::Combo("Current Environment", &m_infos.current_hdr_map, m_infos.hdr_files, sizeof(m_infos.hdr_files) / sizeof(char*));
 
     if (ImGui::TreeNode("FX"))
     {
@@ -182,6 +180,11 @@ void Renderer::render(double xpos, double ypos)
         camera_reset_pos = false;
     }
     m_camera->update(m_window, m_delta, xpos, ypos, move);
+
+    // Update skybox
+    int hdr_map_id = m_infos.current_hdr_map; 
+    if (hdr_map_id != m_envmap_pass->get_current_hdr_map())
+        m_envmap_pass->init_env_maps(m_infos.hdr_files[hdr_map_id], hdr_map_id);
 
     // G-Buffer Pass    
     m_gbuffer_pass->render(m_camera, m_scene);

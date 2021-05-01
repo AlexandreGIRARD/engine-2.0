@@ -10,6 +10,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #include <memory>
+#include <string>
 
 class Scene;
 class Camera;
@@ -23,8 +24,8 @@ using shared_camera = std::shared_ptr<Camera>;
 struct Renderer_Info
 {
     // Environment Map Infos
-    int current_map;
-
+    int current_hdr_map = 0;
+    const char* hdr_files[2] = {"grass_field", "studio"};
     //    
 };
 
@@ -59,5 +60,5 @@ private:
     Deferred_Pass* m_deferred_pass;
     EnvMap_Pass*   m_envmap_pass;
 
-    Renderer_Info infos;
+    Renderer_Info m_infos;
 };
