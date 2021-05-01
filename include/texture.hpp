@@ -11,6 +11,7 @@ using shared_program = std::shared_ptr<Program>;
 class Texture
 {
 public:
+    Texture(const std::string& file_path, bool as_float);
     Texture(const tinygltf::Texture& tex, const int tex_coord, const tinygltf::Model& model);
     ~Texture();
     void bind(const shared_program program, unsigned int location, const char* name);

@@ -8,6 +8,12 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+Program::Program()
+    : m_material_binding(false)
+{
+    m_id_program = glCreateProgram();
+}
+
 Program::Program(bool material_binding)
     : m_material_binding(material_binding)
 {

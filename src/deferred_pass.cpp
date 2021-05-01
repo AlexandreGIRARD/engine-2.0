@@ -13,7 +13,7 @@ Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
     m_program->link();
 
     // Init attachments
-    m_attach_output = std::make_shared<Attachment>(width, height, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_output = std::make_shared<Attachment>(GL_TEXTURE_2D, width, height, GL_RGBA, GL_UNSIGNED_BYTE);
 
     // Init framebuffer
     m_fbo->bind();

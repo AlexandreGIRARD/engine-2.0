@@ -162,11 +162,16 @@ void Renderer::update_imgui()
         ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
         ImGui::TreePop();
     }
+    if (ImGui::TreeNode("Environment Map"))
+    {
+        ImGui::TreePop();
+    }
 
     if (ImGui::TreeNode("FX"))
     {
         ImGui::TreePop();
     }
+    ImGui::ShowDemoWindow();
     ImGui::End();
 }
 

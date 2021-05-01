@@ -15,9 +15,18 @@ class Scene;
 class Camera;
 class G_Buffer_Pass;
 class Deferred_Pass;
+class EnvMap_Pass;
 
 using shared_scene  = std::shared_ptr<Scene>;
 using shared_camera = std::shared_ptr<Camera>;
+
+struct Renderer_Info
+{
+    // Environment Map Infos
+    int current_map;
+
+    //    
+};
 
 class Renderer
 {
@@ -48,4 +57,7 @@ private:
     // Pass
     G_Buffer_Pass* m_gbuffer_pass;
     Deferred_Pass* m_deferred_pass;
+    EnvMap_Pass*   m_envmap_pass;
+
+    Renderer_Info infos;
 };

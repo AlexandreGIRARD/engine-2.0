@@ -7,6 +7,7 @@
 class Program
 {
 public:
+    Program();
     Program(bool material_binding);
     ~Program();
 

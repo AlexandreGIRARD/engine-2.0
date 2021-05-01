@@ -1,8 +1,62 @@
 #include "texture.hpp"
 
 #include <glad/glad.h>
+#include <stb_image.h>
 
 #include "program.hpp"
+
+Texture::Texture(const std::string& file_path, bool as_float)
+{
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, m_id);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nb_channels;
+    void* data;
+    GLenum internal_format, format, type;
+
+    if (as_float)
+    {
+        data = stbi_loadf(file_path.c_str(), &width, &height, &nb_channels, 0);
+        if (nb_channels == 3)
+        {
+            internal_format = GL_RGB16F;
+            format = GL_RGB;
+            type = GL_FLOAT;
+        }
+        else
+        {
+            internal_format = GL_RGBA16F;
+            format = GL_RGB;
+            type = GL_FLOAT;
+        }
+    }
+    else
+    {
+        data = stbi_load(file_path.c_str(), &width, &height, &nb_channels, 0);
+        if (nb_channels == 3)
+        {
+            internal_format = GL_RGB;
+            format = GL_RGB;
+            type = GL_UNSIGNED_BYTE;
+        }
+        else
+        {
+            internal_format = GL_RGBA;
+            format = GL_RGBA;
+            type = GL_UNSIGNED_BYTE;
+        }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, type, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(data);
+}
 
 Texture::Texture(const tinygltf::Texture& tex, int tex_coord, const tinygltf::Model& model)
     : m_tex_coord(tex_coord)
@@ -17,13 +71,12 @@ Texture::Texture(const tinygltf::Texture& tex, int tex_coord, const tinygltf::Mo
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, sampler.minFilter != -1 ? sampler.minFilter : GL_NEAREST_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, sampler.magFilter != -1 ? sampler.magFilter : GL_LINEAR);
 
-    int width, height, nb_channels;
     tinygltf::Image image = model.images[model.textures[tex.source].source];
     
 
-    width  = image.width;
-    height = image.height;
-    nb_channels = image.component;
+    int width  = image.width;
+    int height = image.height;
+    int nb_channels = image.component;
 
     unsigned char* data = image.image.data();
     

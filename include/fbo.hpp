@@ -4,9 +4,10 @@
 
 struct Attachment
 {
-    Attachment(unsigned int width,unsigned int height, unsigned int format, unsigned int type);
+    Attachment(unsigned int target, unsigned int width,unsigned int height, unsigned int format, unsigned int type);
     ~Attachment();
 
+    unsigned int m_target;
     unsigned int m_width;
     unsigned int m_height;
     unsigned int m_format;
