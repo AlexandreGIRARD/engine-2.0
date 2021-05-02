@@ -5,23 +5,23 @@
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-EnvMap_Pass::EnvMap_Pass()
-    : Render_Pass(false)
+EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
+    : Render_Pass(width, height, false)
 {
-    // Init skybox program
+    // Init Skybox Generation program
     m_program->add_shader("envmap/cubemap.vert", GL_VERTEX_SHADER);
     m_program->add_shader("envmap/cubemap.geom", GL_GEOMETRY_SHADER);
     m_program->add_shader("envmap/envmap.frag", GL_FRAGMENT_SHADER);
     m_program->link();
 
-    // Init irradiance program
+    // Init Irradiance Generation program
     m_irradiance_program = std::make_shared<Program>();
     m_irradiance_program->add_shader("envmap/cubemap.vert", GL_VERTEX_SHADER);
     m_irradiance_program->add_shader("envmap/cubemap.geom", GL_GEOMETRY_SHADER);
     m_irradiance_program->add_shader("envmap/irradiance.frag", GL_FRAGMENT_SHADER);
     m_irradiance_program->link();
 
-    // Init specular program
+    // Init Specular Generation program
     m_specular_program = std::make_shared<Program>();
     m_specular_program->add_shader("envmap/cubemap.vert", GL_VERTEX_SHADER);
     m_specular_program->add_shader("envmap/cubemap.geom", GL_GEOMETRY_SHADER);
@@ -29,13 +29,10 @@ EnvMap_Pass::EnvMap_Pass()
     m_specular_program->link();
 
     // Init attachments
-    m_attach_skybox     = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_FLOAT);
-    m_attach_irradiance = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 64, 64, GL_RGB, GL_FLOAT);
-    m_attach_irradiance = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB, GL_FLOAT);
-
-    // Init framebuffer
-    m_fbo->bind();
-
+    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_FLOAT);
+    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 64, 64, GL_RGB, GL_FLOAT);
+    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB, GL_FLOAT);
+    
     // Init Screen-Quad
     set_cube();
     set_views();
@@ -44,6 +41,11 @@ EnvMap_Pass::EnvMap_Pass()
 EnvMap_Pass::~EnvMap_Pass()
 {
     delete m_hdr_tex;
+}
+
+void EnvMap_Pass::resize(unsigned int width, unsigned int height)
+{
+    Render_Pass::resize(width, height);
 }
 
 void EnvMap_Pass::set_cube()
@@ -118,12 +120,12 @@ void EnvMap_Pass::set_views()
 
 void EnvMap_Pass::render(Camera* camera, Scene* scene)
 {
-    // Do nothing this pass is useless
+    // Do nothing
 }
 
 const std::vector<shared_attachment> EnvMap_Pass::get_attachments()
 {
-    return std::vector<shared_attachment>{m_attach_skybox, m_attach_irradiance, m_attach_specular};
+    return std::vector<shared_attachment>{m_attach_skybox_map, m_attach_irradiance_cubemap, m_attach_specular_cubemap};
 }
 
 void EnvMap_Pass::init_env_maps(const std::string& file_path, const int id)
@@ -136,8 +138,8 @@ void EnvMap_Pass::init_env_maps(const std::string& file_path, const int id)
     m_hdr_id = id;
 
     render_skybox();
-    // render_irradiance();
-    // render_specular();
+    render_irradiance();
+    render_specular();
 }
 
 void EnvMap_Pass::bind_matrices(shared_program program)
@@ -153,9 +155,7 @@ void EnvMap_Pass::render_cubemap(shared_program program, shared_attachment attac
 
     m_fbo->bind();
     m_fbo->set_attachment(attachment, GL_COLOR_ATTACHMENT0);
-    m_fbo->unbind();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo->get_name());
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
@@ -170,7 +170,8 @@ void EnvMap_Pass::render_skybox()
     m_program->use();
     m_hdr_tex->bind(m_program, 0, "hdr_map");
     glViewport(0, 0, 512, 512);
-    render_cubemap(m_program, m_attach_skybox);
+    render_cubemap(m_program, m_attach_skybox_map);
+    glViewport(0, 0, m_width, m_height);
 }
 
 void EnvMap_Pass::render_irradiance()
@@ -180,10 +181,11 @@ void EnvMap_Pass::render_irradiance()
     // Skybox Cubemap binding
     m_irradiance_program->addUniformTexture(0, "skybox");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox->m_name);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
 
     glViewport(0, 0, 64, 64);
-    render_cubemap(m_irradiance_program, m_attach_irradiance);
+    render_cubemap(m_irradiance_program, m_attach_irradiance_cubemap);
+    glViewport(0, 0, m_width, m_height);
 }
 
 void EnvMap_Pass::render_specular()
@@ -193,8 +195,9 @@ void EnvMap_Pass::render_specular()
     // Skybox Cubemap binding
     m_specular_program->addUniformTexture(0, "skybox");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox->m_name);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
 
     glViewport(0, 0, 256, 256);
-    render_cubemap(m_specular_program, m_attach_specular);
+    render_cubemap(m_specular_program, m_attach_specular_cubemap);
+    glViewport(0, 0, m_width, m_height);
 }

@@ -13,7 +13,7 @@ public:
 
     void render(Camera* camera, Scene* scene) override;
     const std::vector<shared_attachment> get_attachments() override;
-
+    void resize(unsigned int width, unsigned int height) override;
 
     void set_lights(std::vector<shared_light> lights);
     void set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attchments);

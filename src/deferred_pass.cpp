@@ -5,7 +5,7 @@
 #include "light.hpp"
 
 Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
-    : Render_Pass(false)    
+    : Render_Pass(width, height, false)    
 {
     // Init program
     m_program->add_shader("deferred/deferred.vert", GL_VERTEX_SHADER);
@@ -13,7 +13,7 @@ Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
     m_program->link();
 
     // Init attachments
-    m_attach_output = std::make_shared<Attachment>(GL_TEXTURE_2D, width, height, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_output = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE);
 
     // Init framebuffer
     m_fbo->bind();
@@ -32,6 +32,12 @@ Deferred_Pass::~Deferred_Pass()
 const std::vector<shared_attachment> Deferred_Pass::get_attachments()
 {
     return std::vector<shared_attachment>{m_attach_output};
+}
+
+void Deferred_Pass::resize(unsigned int width, unsigned int height)
+{
+    Render_Pass::resize(width, height);
+    m_attach_output->resize(width, height);
 }
 
 void Deferred_Pass::set_screen_quad()

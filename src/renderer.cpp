@@ -9,6 +9,7 @@
 #include "g_buffer_pass.hpp"
 #include "deferred_pass.hpp"
 #include "envmap_pass.hpp"
+#include "skybox_pass.hpp"
 
 static bool camera_reset_pos;
 static bool move;
@@ -104,9 +105,10 @@ bool Renderer::init_imgui()
 
 bool Renderer::init_pipeline()
 {
-    m_gbuffer_pass = new G_Buffer_Pass(m_width, m_height);
+    m_gbuffer_pass  = new G_Buffer_Pass(m_width, m_height);
     m_deferred_pass = new Deferred_Pass(m_width, m_height);
-    m_envmap_pass = new EnvMap_Pass();
+    m_envmap_pass   = new EnvMap_Pass(m_width, m_height);
+    m_skybox_pass   = new Skybox_Pass(m_width, m_height);
     return true;
 }
 
@@ -124,6 +126,12 @@ void Renderer::loop()
 
         // Callback quit window with KEY_ESCAPE
         utils::quit_window(m_window);
+
+        // Check if window was resized
+        int width, height;
+        glfwGetFramebufferSize(m_window, &width, &height);
+        if (width != m_width || height != m_height)
+            resize(width, height);
 
         // Compute delta time
         m_delta = glfwGetTime() - m_time;
@@ -183,8 +191,11 @@ void Renderer::render(double xpos, double ypos)
 
     // Update skybox
     int hdr_map_id = m_infos.current_hdr_map; 
-    if (hdr_map_id != m_envmap_pass->get_current_hdr_map())
+    if (hdr_map_id != m_envmap_pass->get_current_hdr_map()) 
+    {
         m_envmap_pass->init_env_maps(m_infos.hdr_files[hdr_map_id], hdr_map_id);
+        m_skybox_pass->set_skybox_attachments(m_envmap_pass->get_attachments());
+    }
 
     // G-Buffer Pass    
     m_gbuffer_pass->render(m_camera, m_scene);
@@ -198,7 +209,19 @@ void Renderer::render(double xpos, double ypos)
     m_deferred_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
     m_deferred_pass->render(m_camera, m_scene);
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_deferred_pass->get_fbo()->get_name());
-    glBlitFramebuffer(0, 0, 1920, 1080, 0, 0, 1920, 1080, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    // Render Skybox pass
+    m_skybox_pass->blit_buffers(m_deferred_pass->get_fbo(), m_gbuffer_pass->get_fbo());
+    m_skybox_pass->render(m_camera, m_scene);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_skybox_pass->get_fbo()->get_name());
+    glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::resize(unsigned int width, unsigned int height)
+{
+    m_gbuffer_pass->resize(width, height);
+    m_deferred_pass->resize(width, height);
+    m_envmap_pass->resize(width, height);
+    m_skybox_pass->resize(width, height);
 }

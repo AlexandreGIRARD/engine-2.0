@@ -16,21 +16,34 @@ Attachment::Attachment(unsigned int target, unsigned int width,unsigned int heig
     glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(m_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    if (m_target == GL_TEXTURE_2D)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_width, m_height, 0, m_format, m_type, nullptr);
-    }
-    else
-    {
-        for (int i = 0; i < 6; i++)
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_format, m_width, m_height, 0, m_format, m_type, nullptr);
-    }
-
+    set_size(width, height);
 }
 
 Attachment::~Attachment()
 {
     glDeleteTextures(1, &m_name);
+}
+
+void Attachment::set_size(unsigned int width, unsigned int height)
+{
+    if (m_target == GL_TEXTURE_2D)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, nullptr);
+    }
+    else
+    {
+        for (int i = 0; i < 6; i++)
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_format, width, height, 0, m_format, m_type, nullptr);
+    }
+}
+
+void Attachment::resize(unsigned int width, unsigned int height)
+{
+    m_width  = width;
+    m_height = height;
+
+    glBindTexture(m_target, m_name);
+    set_size(width, height);
 }
 
 FBO::FBO()

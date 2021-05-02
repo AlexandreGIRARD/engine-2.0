@@ -32,11 +32,11 @@ add_executable(engine
     src/mesh.cpp
     src/program.cpp
     src/renderer.cpp
-    src/basic_pass.cpp
     src/texture.cpp
     src/g_buffer_pass.cpp
     src/deferred_pass.cpp
     src/envmap_pass.cpp
+    src/skybox_pass.cpp
     src/fbo.cpp
 
     src/imgui/imgui.cpp

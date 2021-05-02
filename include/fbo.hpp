@@ -6,6 +6,8 @@ struct Attachment
 {
     Attachment(unsigned int target, unsigned int width,unsigned int height, unsigned int format, unsigned int type);
     ~Attachment();
+    void set_size(unsigned int width, unsigned int height);
+    void resize(unsigned int width, unsigned int height);
 
     unsigned int m_target;
     unsigned int m_width;

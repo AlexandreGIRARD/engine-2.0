@@ -17,6 +17,7 @@ class Camera;
 class G_Buffer_Pass;
 class Deferred_Pass;
 class EnvMap_Pass;
+class Skybox_Pass;
 
 using shared_scene  = std::shared_ptr<Scene>;
 using shared_camera = std::shared_ptr<Camera>;
@@ -43,6 +44,7 @@ private:
     void update_imgui();
     void render_imgui();
     void render(double xpos, double ypos);
+    void resize(unsigned int width, unsigned int height);
 
     Scene*  m_scene;
     Camera* m_camera;
@@ -59,6 +61,7 @@ private:
     G_Buffer_Pass* m_gbuffer_pass;
     Deferred_Pass* m_deferred_pass;
     EnvMap_Pass*   m_envmap_pass;
+    Skybox_Pass*   m_skybox_pass;
 
     Renderer_Info m_infos;
 };

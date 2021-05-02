@@ -4,21 +4,22 @@
 
 class Texture;
 
-class EnvMap_Pass : Render_Pass
+class EnvMap_Pass : public Render_Pass
 {
 public:
-    EnvMap_Pass();
+    EnvMap_Pass(unsigned int width, unsigned int height);
     ~EnvMap_Pass();
 
     void render(Camera* camera, Scene* scene) override;
     const std::vector<shared_attachment> get_attachments() override;
+    void resize(unsigned int width, unsigned int height) override;
 
     void init_env_maps(const std::string& file_path, const int id);
     const int get_current_hdr_map() { return m_hdr_id; }
 
-    shared_attachment m_attach_skybox;
-    shared_attachment m_attach_irradiance;
-    shared_attachment m_attach_specular;
+    shared_attachment m_attach_skybox_map; // Generated Skybox CUBEMAP 
+    shared_attachment m_attach_irradiance_cubemap; // Generated Irradiance CUBEMAP
+    shared_attachment m_attach_specular_cubemap; // Generated Specular CUBEMAP
 
 private:
     void set_cube();

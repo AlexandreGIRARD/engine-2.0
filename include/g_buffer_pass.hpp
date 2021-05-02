@@ -11,6 +11,7 @@ public :
 
     void render(Camera* camera, Scene* scene) override;
     const std::vector<shared_attachment> get_attachments() override;
+    void resize(unsigned int width, unsigned int height) override;
 
     unsigned int* m_buffers;
 
