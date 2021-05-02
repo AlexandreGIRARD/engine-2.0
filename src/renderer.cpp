@@ -195,6 +195,7 @@ void Renderer::render(double xpos, double ypos)
     {
         m_envmap_pass->init_env_maps(m_infos.hdr_files[hdr_map_id], hdr_map_id);
         m_skybox_pass->set_skybox_attachments(m_envmap_pass->get_attachments());
+        m_deferred_pass->set_ibl_attachments(m_envmap_pass->get_attachments());
     }
 
     // G-Buffer Pass    

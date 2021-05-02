@@ -18,6 +18,7 @@ public:
     void set_lights(std::vector<shared_light> lights);
     void set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attchments);
     void set_ssao_attachment(const shared_attachment occlusion_attachment);
+    void set_ibl_attachments(const std::vector<shared_attachment> ibl_attchments);
 
     shared_attachment m_attach_output;
 

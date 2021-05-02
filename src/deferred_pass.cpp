@@ -154,6 +154,21 @@ void Deferred_Pass::set_ssao_attachment(const shared_attachment ssao_attachment)
 
     // SSAO texture
     m_program->addUniformTexture(5, "ssao_tex");
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, ssao_attachment->m_name);
+}
+
+void Deferred_Pass::set_ibl_attachments(const std::vector<shared_attachment> ibl_attachments)
+{
+    m_program->use();
+
+    // Irradiance Cubemap
+    m_program->addUniformTexture(6, "ibl_irradiance");
+    glActiveTexture(GL_TEXTURE6);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[0]->m_name);
+
+    // Specular Cubemap
+    m_program->addUniformTexture(7, "ibl_specular");
+    glActiveTexture(GL_TEXTURE6);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[1]->m_name);
 }
