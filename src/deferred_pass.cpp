@@ -163,12 +163,22 @@ void Deferred_Pass::set_ibl_attachments(const std::vector<shared_attachment> ibl
     m_program->use();
 
     // Irradiance Cubemap
-    m_program->addUniformTexture(6, "ibl_irradiance");
+    m_program->addUniformTexture(6, "ibl_diffuse");
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[0]->m_name);
 
     // Specular Cubemap
     m_program->addUniformTexture(7, "ibl_specular");
-    glActiveTexture(GL_TEXTURE6);
+    glActiveTexture(GL_TEXTURE7);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[1]->m_name);
+}
+
+void Deferred_Pass::set_brdf_lut_attachment(const std::vector<shared_attachment> brdf_lut_attachments)
+{
+    m_program->use();
+
+    // BRDF Look Up Table
+    m_program->addUniformTexture(8, "brdf_lut");
+    glActiveTexture(GL_TEXTURE8);
+    glBindTexture(GL_TEXTURE_2D, brdf_lut_attachments[0]->m_name);
 }

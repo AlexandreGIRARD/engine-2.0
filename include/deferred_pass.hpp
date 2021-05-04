@@ -19,6 +19,7 @@ public:
     void set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attchments);
     void set_ssao_attachment(const shared_attachment occlusion_attachment);
     void set_ibl_attachments(const std::vector<shared_attachment> ibl_attchments);
+    void set_brdf_lut_attachment(const std::vector<shared_attachment> brdf_lut_attachments);
 
     shared_attachment m_attach_output;
 

@@ -110,7 +110,7 @@ bool Renderer::init_pipeline()
     m_deferred_pass = new Deferred_Pass(m_width, m_height);
     m_envmap_pass   = new EnvMap_Pass(m_width, m_height);
     m_skybox_pass   = new Skybox_Pass(m_width, m_height);
-    m_brdf_lut_pass = new BRDF_LUT_Pass(512, 512);
+    m_brdf_lut_pass = new BRDF_LUT_Pass(m_width, m_height);
     return true;
 }
 
@@ -118,6 +118,10 @@ void Renderer::loop()
 {
     double xpos, ypos;
     bool move_cursor = true;
+
+    // Pre-Loop initialisation
+    m_brdf_lut_pass->render(nullptr, nullptr);
+    m_deferred_pass->set_brdf_lut_attachment(m_brdf_lut_pass->get_attachments());
 
     // Render loop
     while(!glfwWindowShouldClose(m_window))

@@ -75,8 +75,9 @@ uniform int nb_point_lights;
 uniform int nb_spot_lights;
 
 // IBL
-layout (binding = 6) uniform samplerCube ibl_irradiance;
+layout (binding = 6) uniform samplerCube ibl_diffuse;
 layout (binding = 7) uniform samplerCube ibl_specular;
+layout (binding = 8) uniform sampler2D   brdf_lut;
 
 // Other uniforms
 uniform vec3 cam_pos;
@@ -113,6 +114,11 @@ vec3 Fresnel_Schlick(vec3 F0, float VdotH)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - VdotH, 0.0, 1.0), 5.0);
 }
 
+vec3 Fresnel_Schlick_Roughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+}  
+
 // Lambertian diffuse
 
 vec3 Lambertian_Diffuse(vec3 base_color)
@@ -120,7 +126,22 @@ vec3 Lambertian_Diffuse(vec3 base_color)
     return base_color / PI;
 }
 
-// ----------------------------------------------------------------------------
+vec3 get_ibl_contribution(float roughness, vec3 base_color, vec3 F, float NdotV, vec3 N, vec3 R)
+{
+    float mip_count = 4.0; // resolution of 512x512
+    float lod = (roughness * mip_count);
+	
+    vec2 brdf = texture(brdf_lut, vec2(NdotV, roughness)).rg;
+
+    vec3 diffuse_ibl  = texture(ibl_diffuse, N).rgb;
+    vec3 specular_ibl = textureLod(ibl_specular, R, lod).rgb;
+
+    vec3 diffuse  = diffuse_ibl  * base_color;
+    vec3 specular = specular_ibl * (F * brdf.x + brdf.y);
+
+    return (1 - F) * diffuse + specular;
+}
+
 void main()
 {		
     vec3 base_color = pow(texture(base_color_tex, frag_uv).rgb, vec3(2.2));
@@ -132,9 +153,11 @@ void main()
     vec3 V          = normalize(cam_pos - world_pos);
     vec3 N          = texture(normal_tex, frag_uv).xyz;
     vec3 F0         = mix(vec3(0.04), base_color, metallic);
+    float NdotV     = clamp(dot(N, V), 0.0, 1.0);
+
 
     // reflectance equation
-    vec3 Lo = vec3(0.0);
+    vec3 color = vec3(0.0);
     for(int i = 0; i < nb_point_lights; i++) 
     {
         // Compute BRDF infos
@@ -142,7 +165,6 @@ void main()
         vec3 H = normalize(V + L);
 
         float NdotH = clamp(dot(N, H), 0.0, 1.0);
-        float NdotV = clamp(dot(N, V), 0.0, 1.0);
         float NdotL = clamp(dot(N, L), 0.0, 1.0);
         float VdotH = clamp(dot(V, H), 0.0, 1.0);
 
@@ -160,18 +182,12 @@ void main()
         vec3 specular_contrib = (D * F * G) / (4.0 * NdotV * NdotL + 0.001);
 
         // add to outgoing radiance Lo
-        Lo += (diffuse_contrib + specular_contrib) * radiance * NdotL;
+        color += (diffuse_contrib + specular_contrib) * radiance * NdotL;
     }   
     
-    // // ambient lighting (we now use IBL as the ambient term)
-    // vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0);
-    // vec3 kD = 1.0 - kS;
-    // kD *= 1.0 - metallic;	  
-    // vec3 irradiance = texture(ibl_irradiance, N).rgb;
-    // vec3 diffuse      = irradiance * albedo;
-    // vec3 ambient = (kD * diffuse) * ao;
-    vec3 ambient = vec3(0.03) * base_color * ao;
-    vec3 color = ambient + Lo;
+    vec3 R = reflect(-V, N); // Relection vector
+    vec3 F = Fresnel_Schlick_Roughness(NdotV, F0, roughness);
+    color += get_ibl_contribution(roughness, base_color, F, NdotV, N, R) * 0.2;
 
     // color = mix(color, color * ao, 1.0);
 	color += emissive;

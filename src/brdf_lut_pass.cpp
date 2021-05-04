@@ -15,7 +15,6 @@ BRDF_LUT_Pass::BRDF_LUT_Pass(unsigned int width, unsigned int height)
     m_fbo->set_attachment(m_attach_lut, GL_COLOR_ATTACHMENT0);
 
     set_screen_quad();
-    render(nullptr, nullptr);
 }
 
 BRDF_LUT_Pass::~BRDF_LUT_Pass()
