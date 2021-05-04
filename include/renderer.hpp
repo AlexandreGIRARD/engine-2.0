@@ -18,6 +18,7 @@ class G_Buffer_Pass;
 class Deferred_Pass;
 class EnvMap_Pass;
 class Skybox_Pass;
+class BRDF_LUT_Pass;
 
 using shared_scene  = std::shared_ptr<Scene>;
 using shared_camera = std::shared_ptr<Camera>;
@@ -62,6 +63,7 @@ private:
     Deferred_Pass* m_deferred_pass;
     EnvMap_Pass*   m_envmap_pass;
     Skybox_Pass*   m_skybox_pass;
+    BRDF_LUT_Pass* m_brdf_lut_pass;
 
     Renderer_Info m_infos;
 };

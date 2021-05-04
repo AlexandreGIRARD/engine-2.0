@@ -24,9 +24,10 @@ public:
 private:
     void set_cube();
     void set_views();
+
     void bind_matrices(shared_program program);
 
-    void render_cubemap(shared_program program, shared_attachment attachment);
+    void render_cubemap(shared_program program, shared_attachment attachment, int level = 0);
     void render_skybox();
     void render_irradiance();
     void render_specular();

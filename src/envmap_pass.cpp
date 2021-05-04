@@ -31,9 +31,14 @@ EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
     // Init attachments
     m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_FLOAT);
     m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 64, 64, GL_RGB, GL_FLOAT);
-    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB, GL_FLOAT);
-    
-    // Init Screen-Quad
+    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_FLOAT);
+
+    // @Warning cest deg
+    // Generate MipMap for specular, still binded
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+    // Init Cube
     set_cube();
     set_views();
 }
@@ -149,12 +154,12 @@ void EnvMap_Pass::bind_matrices(shared_program program)
         program->addUniformMat4(m_views[i], ("views[" + std::to_string(i) + "]").c_str());
 }
 
-void EnvMap_Pass::render_cubemap(shared_program program, shared_attachment attachment)
+void EnvMap_Pass::render_cubemap(shared_program program, shared_attachment attachment, int level)
 {
     bind_matrices(program);
 
     m_fbo->bind();
-    m_fbo->set_attachment(attachment, GL_COLOR_ATTACHMENT0);
+    m_fbo->set_attachment(attachment, GL_COLOR_ATTACHMENT0, level);
 
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -197,7 +202,17 @@ void EnvMap_Pass::render_specular()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
 
-    glViewport(0, 0, 256, 256);
-    render_cubemap(m_specular_program, m_attach_specular_cubemap);
+    int size = 512;
+    int max_level = 5;
+    for (int level = 0; level < max_level; level++)
+    {
+        size = 512 * std::pow(0.5, level);
+        glViewport(0, 0, size, size);
+
+        float roughness = static_cast<float>(level) / static_cast<float>(max_level - 1);
+        m_specular_program->addUniformFloat(roughness, "roughness");
+
+        render_cubemap(m_specular_program, m_attach_specular_cubemap, level);
+    }
     glViewport(0, 0, m_width, m_height);
 }

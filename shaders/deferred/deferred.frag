@@ -90,36 +90,34 @@ layout (location = 0) out vec4 deferred_output;
 // More here http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
 
 // Normal Distribution Function
-float NDF_GGX(brdf_infos infos)
+float NDF_GGX(float NdotH, float roughness)
 {
-    float square_alpha = infos.roughness * infos.roughness;
-    float denum = (infos.NdotH * infos.NdotH) * (square_alpha - 1.0) + 1.0;
+    float square_alpha = roughness * roughness;
+    float denum = (NdotH * NdotH) * (square_alpha - 1.0) + 1.0;
     return square_alpha / (PI * denum * denum);
 }
 
 // Geometry Function
-float Geometry_Schlick_GGX(brdf_infos infos)
+float Geometry_Smith_GGX(float NdotV, float NdotL, float roughness)
 {
-    float NdotV = infos.NdotV;
-    float NdotL = infos.NdotL;
-    float a     = infos.roughness;
-    float ggx1 = 2.0 * NdotL / (NdotL + sqrt(a * a + (1.0 - a * a) * (NdotL * NdotL)));
-    float ggx2 = 2.0 * NdotV / (NdotV + sqrt(a * a + (1.0 - a * a) * (NdotV * NdotV)));
+    float k = (roughness + 1.f) * (roughness + 1.f) / 8.f;
+    float ggx1 = NdotL / (NdotL * (1 - k) + k);
+    float ggx2 = NdotV / (NdotV * (1 - k) + k);
 
     return ggx1 * ggx2;
 }
 
 // Fresnel Equation
-vec3 Fresnel_Schlick(brdf_infos infos)
+vec3 Fresnel_Schlick(vec3 F0, float VdotH)
 {
-    return infos.F0 + (1.0 - infos.F0) * pow(clamp(1.0 - infos.VdotH, 0.0, 1.0), 5.0);
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - VdotH, 0.0, 1.0), 5.0);
 }
 
 // Lambertian diffuse
 
-vec3 Lambertian_Diffuse(brdf_infos infos)
+vec3 Lambertian_Diffuse(vec3 base_color)
 {
-    return infos.base_color / PI;
+    return base_color / PI;
 }
 
 // ----------------------------------------------------------------------------
@@ -129,18 +127,11 @@ void main()
     float metallic  = texture(orm_tex, frag_uv).b;
     float roughness = texture(orm_tex, frag_uv).g;
     float ao        = texture(orm_tex, frag_uv).r;
-    vec3 emissive   = texture(emissive_tex, frag_uv).rgb;
+    vec3 emissive   = pow(texture(emissive_tex, frag_uv).rgb, vec3(2.2));
     vec3 world_pos  = texture(position_tex, frag_uv).xyz;
     vec3 V          = normalize(cam_pos - world_pos);
     vec3 N          = texture(normal_tex, frag_uv).xyz;
-
-
-    // Init brdf infos
-    brdf_infos infos;
-    infos.roughness  = roughness;
-    infos.metallic   = metallic;
-    infos.F0         = mix(vec3(0.04), base_color, metallic);
-    infos.base_color = base_color;
+    vec3 F0         = mix(vec3(0.04), base_color, metallic);
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
@@ -150,12 +141,10 @@ void main()
         vec3 L = normalize(point_lights[i].position - world_pos);
         vec3 H = normalize(V + L);
 
-        brdf_infos infos;
-        infos.NdotH = clamp(dot(N, H), 0.0, 1.0);
-        infos.NdotV = clamp(dot(N, V), 0.0, 1.0);
-        infos.NdotL = clamp(dot(N, V), 0.0, 1.0);
-        infos.LdotH = clamp(dot(L, H), 0.0, 1.0);
-        infos.VdotH = clamp(dot(V, H), 0.0, 1.0);
+        float NdotH = clamp(dot(N, H), 0.0, 1.0);
+        float NdotV = clamp(dot(N, V), 0.0, 1.0);
+        float NdotL = clamp(dot(N, L), 0.0, 1.0);
+        float VdotH = clamp(dot(V, H), 0.0, 1.0);
 
         // Radiance
         float distance = length(point_lights[i].position - world_pos);
@@ -163,15 +152,15 @@ void main()
         vec3 radiance = point_lights[i].color * attenuation;
 
         // Cook Torrance BRDF computation
-        float D = NDF_GGX(infos);   
-        float G = Geometry_Schlick_GGX(infos);      
-        vec3  F = Fresnel_Schlick(infos);
+        float D = NDF_GGX(NdotH, roughness);   
+        float G = Geometry_Smith_GGX(NdotV, NdotL, roughness);      
+        vec3  F = Fresnel_Schlick(F0, VdotH);
 
-        vec3 diffuse_contrib  = (1.0 - F) * Lambertian_Diffuse(infos);
-        vec3 specular_contrib = (D * F * G) / (4.0 * infos.NdotV * infos.NdotL);
+        vec3 diffuse_contrib  = (vec3(1.0) - F) * Lambertian_Diffuse(base_color);
+        vec3 specular_contrib = (D * F * G) / (4.0 * NdotV * NdotL + 0.001);
 
         // add to outgoing radiance Lo
-        Lo += (diffuse_contrib + specular_contrib) * radiance * infos.NdotL;
+        Lo += (diffuse_contrib + specular_contrib) * radiance * NdotL;
     }   
     
     // // ambient lighting (we now use IBL as the ambient term)
@@ -181,10 +170,10 @@ void main()
     // vec3 irradiance = texture(ibl_irradiance, N).rgb;
     // vec3 diffuse      = irradiance * albedo;
     // vec3 ambient = (kD * diffuse) * ao;
-    
-    vec3 color = vec3(0.03) + Lo;
+    vec3 ambient = vec3(0.03) * base_color * ao;
+    vec3 color = ambient + Lo;
 
-    color = mix(color, color * ao, 1.0);
+    // color = mix(color, color * ao, 1.0);
 	color += emissive;
 
     // HDR tonemapping

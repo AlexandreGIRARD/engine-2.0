@@ -28,7 +28,7 @@ public:
     const void bind();
     const void unbind();
 
-    const void set_attachment(shared_attachment attachment, unsigned int attachment_layout);
+    const void set_attachment(shared_attachment attachment, unsigned int attachment_layout, int mip_level = 0);
 
     const int get_name() { return m_name; };
 

@@ -68,10 +68,10 @@ const void FBO::unbind()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-const void FBO::set_attachment(shared_attachment attachment, unsigned int attachment_layout)
+const void FBO::set_attachment(shared_attachment attachment, unsigned int attachment_layout, int level)
 {
     if (attachment->m_target == GL_TEXTURE_2D)
-        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment_layout, GL_TEXTURE_2D, attachment->m_name, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment_layout, GL_TEXTURE_2D, attachment->m_name, level);
     else
-        glFramebufferTexture(GL_FRAMEBUFFER, attachment_layout, attachment->m_name, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, attachment_layout, attachment->m_name, level);
 }

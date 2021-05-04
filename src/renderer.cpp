@@ -10,6 +10,7 @@
 #include "deferred_pass.hpp"
 #include "envmap_pass.hpp"
 #include "skybox_pass.hpp"
+#include "brdf_lut_pass.hpp"
 
 static bool camera_reset_pos;
 static bool move;
@@ -109,6 +110,7 @@ bool Renderer::init_pipeline()
     m_deferred_pass = new Deferred_Pass(m_width, m_height);
     m_envmap_pass   = new EnvMap_Pass(m_width, m_height);
     m_skybox_pass   = new Skybox_Pass(m_width, m_height);
+    m_brdf_lut_pass = new BRDF_LUT_Pass(512, 512);
     return true;
 }
 

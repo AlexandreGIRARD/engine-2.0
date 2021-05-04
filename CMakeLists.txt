@@ -37,6 +37,7 @@ add_executable(engine
     src/deferred_pass.cpp
     src/envmap_pass.cpp
     src/skybox_pass.cpp
+    src/brdf_lut_pass.cpp
     src/fbo.cpp
 
     src/imgui/imgui.cpp
