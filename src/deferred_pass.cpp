@@ -90,6 +90,8 @@ void Deferred_Pass::render(Camera* camera, Scene* scene)
     m_program->use();
     glm::vec3 cam_pos = camera->get_position();
     m_program->addUniformVec3(cam_pos, "cam_pos");
+    m_program->addUniformFloat(m_ibl_factor, "ibl_factor");
+
     render_screen_quad();
 }
 
@@ -165,12 +167,12 @@ void Deferred_Pass::set_ibl_attachments(const std::vector<shared_attachment> ibl
     // Irradiance Cubemap
     m_program->addUniformTexture(6, "ibl_diffuse");
     glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[0]->m_name);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[1]->m_name);
 
     // Specular Cubemap
     m_program->addUniformTexture(7, "ibl_specular");
     glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[1]->m_name);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[2]->m_name);
 }
 
 void Deferred_Pass::set_brdf_lut_attachment(const std::vector<shared_attachment> brdf_lut_attachments)

@@ -42,19 +42,6 @@ struct sun_light
     float range;
 };
 
-struct brdf_infos
-{
-    vec3  base_color;             // base color value at the surface fragment
-    float roughness;              // roughness value at the surface fragment
-    float metallic;               // metallic value at the surface fragment
-    vec3  F0;                     // Indice Of Reflection
-    float NdotL;                  // cos angle between normal and light direction
-    float NdotV;                  // cos angle between normal and view direction
-    float NdotH;                  // cos angle between normal and half vector
-    float LdotH;                  // cos angle between light direction and half vector
-    float VdotH;                  // cos angle between view direction and half vector
-};
-
 // G-Buffer textures
 layout (binding = 0) uniform sampler2D position_tex;
 layout (binding = 1) uniform sampler2D base_color_tex;
@@ -78,6 +65,7 @@ uniform int nb_spot_lights;
 layout (binding = 6) uniform samplerCube ibl_diffuse;
 layout (binding = 7) uniform samplerCube ibl_specular;
 layout (binding = 8) uniform sampler2D   brdf_lut;
+uniform float ibl_factor;
 
 // Other uniforms
 uniform vec3 cam_pos;
@@ -185,11 +173,11 @@ void main()
         color += (diffuse_contrib + specular_contrib) * radiance * NdotL;
     }   
     
-    vec3 R = reflect(-V, N); // Relection vector
+    vec3 R = normalize(reflect(-V, N)); // Relection vector
     vec3 F = Fresnel_Schlick_Roughness(NdotV, F0, roughness);
-    color += get_ibl_contribution(roughness, base_color, F, NdotV, N, R) * 0.2;
+    color += get_ibl_contribution(roughness, base_color, F, NdotV, N, R) * ibl_factor;
 
-    // color = mix(color, color * ao, 1.0);
+    color = mix(color, color * ao, 1.0);
 	color += emissive;
 
     // HDR tonemapping
@@ -198,5 +186,4 @@ void main()
     color = pow(color, vec3(1.0/2.2)); 
 
     deferred_output = vec4(color, 1.0);
-    // deferred_output = vec4(texture(emissive_tex, frag_uv).rgb, 1);
 }

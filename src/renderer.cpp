@@ -121,7 +121,6 @@ void Renderer::loop()
 
     // Pre-Loop initialisation
     m_brdf_lut_pass->render(nullptr, nullptr);
-    m_deferred_pass->set_brdf_lut_attachment(m_brdf_lut_pass->get_attachments());
 
     // Render loop
     while(!glfwWindowShouldClose(m_window))
@@ -178,6 +177,7 @@ void Renderer::update_imgui()
         ImGui::TreePop();
     }
     ImGui::Combo("Current Environment", &m_infos.current_hdr_map, m_infos.hdr_files, sizeof(m_infos.hdr_files) / sizeof(char*));
+    ImGui::SliderFloat("IBL Factor", m_deferred_pass->get_ibl_factor(), 0.f, 1.f);
 
     if (ImGui::TreeNode("FX"))
     {
@@ -202,6 +202,7 @@ void Renderer::render(double xpos, double ypos)
         m_envmap_pass->init_env_maps(m_infos.hdr_files[hdr_map_id], hdr_map_id);
         m_skybox_pass->set_skybox_attachments(m_envmap_pass->get_attachments());
         m_deferred_pass->set_ibl_attachments(m_envmap_pass->get_attachments());
+        m_deferred_pass->set_brdf_lut_attachment(m_brdf_lut_pass->get_attachments());
     }
 
     // G-Buffer Pass    

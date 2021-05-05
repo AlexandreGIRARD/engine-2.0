@@ -21,6 +21,8 @@ public:
     void set_ibl_attachments(const std::vector<shared_attachment> ibl_attchments);
     void set_brdf_lut_attachment(const std::vector<shared_attachment> brdf_lut_attachments);
 
+    float* get_ibl_factor() { return &m_ibl_factor; };
+
     shared_attachment m_attach_output;
 
 private:
@@ -29,4 +31,6 @@ private:
 
     unsigned int m_quad_vao;
     unsigned int m_quad_vbo;
+
+    float m_ibl_factor = 0.4f;
 };
