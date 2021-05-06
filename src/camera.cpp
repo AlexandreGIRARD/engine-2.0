@@ -6,10 +6,10 @@
 
 // default one
 Camera::Camera()
-    : m_position(0,0,-5)
+    : m_position(0,0,5)
     , m_target(0,0,0)
     , m_up(0,1,0)
-    , m_forward(0,0,1)
+    , m_forward(0,0,-1)
     , m_right(- glm::cross(m_up, m_forward))
     , m_speed(5)
     , m_fov(45)

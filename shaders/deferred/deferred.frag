@@ -135,7 +135,7 @@ void main()
     vec3 base_color = pow(texture(base_color_tex, frag_uv).rgb, vec3(2.2));
     float metallic  = texture(orm_tex, frag_uv).b;
     float roughness = texture(orm_tex, frag_uv).g;
-    float ao        = texture(orm_tex, frag_uv).r;
+    float ao        = texture(orm_tex, frag_uv).r * texture(ssao_tex, frag_uv).r;
     vec3 emissive   = pow(texture(emissive_tex, frag_uv).rgb, vec3(2.2));
     vec3 world_pos  = texture(position_tex, frag_uv).xyz;
     vec3 V          = normalize(cam_pos - world_pos);
@@ -173,7 +173,7 @@ void main()
         color += (diffuse_contrib + specular_contrib) * radiance * NdotL;
     }   
     
-    vec3 R = normalize(reflect(-V, N)); // Relection vector
+    vec3 R = normalize(-reflect(V, N)); // Relection vector
     vec3 F = Fresnel_Schlick_Roughness(NdotV, F0, roughness);
     color += get_ibl_contribution(roughness, base_color, F, NdotV, N, R) * ibl_factor;
 

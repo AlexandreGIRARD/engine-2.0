@@ -11,12 +11,12 @@ G_Buffer_Pass::G_Buffer_Pass(unsigned int width, unsigned int height)
     m_program->link();
 
     // Init attachments
-    m_attach_position   = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_FLOAT);
-    m_attach_base_color = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE);
-    m_attach_orm        = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB, GL_FLOAT);
-    m_attach_emissive   = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE);
-    m_attach_normal     = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_FLOAT);
-    m_attach_depth      = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_DEPTH_COMPONENT, GL_FLOAT);
+    m_attach_position   = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+    m_attach_base_color = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_orm        = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_emissive   = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+    m_attach_normal     = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_depth      = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_FLOAT);
 
     // Init framebuffer
     m_fbo->bind();

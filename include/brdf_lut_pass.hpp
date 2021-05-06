@@ -1,8 +1,8 @@
 #pragma once
 
-#include "render_pass.hpp"
+#include "screen_pass.hpp"
 
-class BRDF_LUT_Pass : public Render_Pass
+class BRDF_LUT_Pass : public Screen_Pass
 {
 public:
     BRDF_LUT_Pass(unsigned int width, unsigned int height);
@@ -15,8 +15,4 @@ public:
     shared_attachment m_attach_lut;
 
 private:
-    void set_screen_quad();
-
-    unsigned int m_quad_vao;
-    unsigned int m_quad_vbo;
 };

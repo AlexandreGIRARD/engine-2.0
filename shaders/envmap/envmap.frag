@@ -6,7 +6,7 @@ layout (binding = 0) uniform sampler2D hdr_map;
 
 in vec3 pos;
 
-out vec4 frag_color;
+out vec3 frag_color;
 
 // from learnopengl
 vec2 SampleSphericalMap(vec3 v)
@@ -20,7 +20,5 @@ vec2 SampleSphericalMap(vec3 v)
 void main()
 {		
     vec2 uv = SampleSphericalMap(normalize(pos)); // make sure to normalize localPos
-    vec3 color = texture(hdr_map, uv).rgb;
-    
-    frag_color = vec4(color, 1.0);
+    frag_color = texture(hdr_map, uv).rgb;   
 }

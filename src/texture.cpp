@@ -5,6 +5,19 @@
 
 #include "program.hpp"
 
+Texture::Texture(Texture_Info& infos, char* data)
+{
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, m_id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, infos.wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, infos.wrap_t);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, infos.min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, infos.mag_filter);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, infos.internal_format, infos.width, infos.height, 0, infos.format, infos.type, data);
+}
+
 Texture::Texture(const std::string& file_path, bool as_float)
 {
     glGenTextures(1, &m_id);
@@ -33,7 +46,7 @@ Texture::Texture(const std::string& file_path, bool as_float)
         else
         {
             internal_format = GL_RGBA16F;
-            format = GL_RGB;
+            format = GL_RGBA;
             type = GL_FLOAT;
         }
     }

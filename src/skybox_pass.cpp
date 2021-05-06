@@ -10,8 +10,8 @@ Skybox_Pass::Skybox_Pass(unsigned int width, unsigned int height)
     m_program->add_shader("envmap/skybox.frag", GL_FRAGMENT_SHADER);
     m_program->link();
 
-    m_attach_color = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE);
-    m_attach_depth = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_DEPTH_COMPONENT, GL_FLOAT);
+    m_attach_color = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_depth = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_FLOAT);
     
     set_cube();
 }

@@ -11,6 +11,7 @@
 #include "envmap_pass.hpp"
 #include "skybox_pass.hpp"
 #include "brdf_lut_pass.hpp"
+#include "ao_pass.hpp"
 
 static bool camera_reset_pos;
 static bool move;
@@ -111,6 +112,7 @@ bool Renderer::init_pipeline()
     m_envmap_pass   = new EnvMap_Pass(m_width, m_height);
     m_skybox_pass   = new Skybox_Pass(m_width, m_height);
     m_brdf_lut_pass = new BRDF_LUT_Pass(m_width, m_height);
+    m_ao_pass       = new AO_Pass(m_width, m_height);
     return true;
 }
 
@@ -168,16 +170,24 @@ void Renderer::update_imgui()
     ImGui::NewFrame();
 
     ImGui::Begin("PBR-Engine");
-    // Change camera settings
-    if (ImGui::TreeNode("Camera"))
-    {
-        ImGui::SliderFloat("Fov", m_camera->get_fov(), 30.f, 120.f);
-        ImGui::SliderFloat("Near Plane", m_camera->get_near(), 0.0001f, 0.1f);
-        ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
-        ImGui::TreePop();
-    }
+    
+    // Camera settings
+    ImGui::Text("Camera Settings:");
+    ImGui::SliderFloat("Fov", m_camera->get_fov(), 30.f, 120.f);
+    ImGui::SliderFloat("Near Plane", m_camera->get_near(), 0.0001f, 0.1f);
+    ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
+    ImGui::Separator();
+
+    // Environment settings
+    ImGui::Text("Environment Settings:");
     ImGui::Combo("Current Environment", &m_infos.current_hdr_map, m_infos.hdr_files, sizeof(m_infos.hdr_files) / sizeof(char*));
     ImGui::SliderFloat("IBL Factor", m_deferred_pass->get_ibl_factor(), 0.f, 1.f);
+    ImGui::Separator();
+
+    // Ambient Occlusion settings
+    ImGui::Text("Ambient Occlusion Settings");
+    ImGui::SliderFloat("Radius", m_ao_pass->get_radius(), 0.001f, 1.0f);
+    ImGui::SliderFloat("Power", m_ao_pass->get_power(), 0.5f, 10.f);
 
     if (ImGui::TreeNode("FX"))
     {
@@ -209,12 +219,15 @@ void Renderer::render(double xpos, double ypos)
     m_gbuffer_pass->render(m_camera, m_scene);
 
     // Occlusion Pass
+    m_ao_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
+    m_ao_pass->render(m_camera, m_scene);
 
     // CSM Pass
 
     // Final Deferred Pass
     m_deferred_pass->set_lights(m_scene->get_lights());
     m_deferred_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
+    m_deferred_pass->set_ssao_attachment(m_ao_pass->get_attachments());
     m_deferred_pass->render(m_camera, m_scene);
 
     // Render Skybox pass
@@ -232,4 +245,5 @@ void Renderer::resize(unsigned int width, unsigned int height)
     m_deferred_pass->resize(width, height);
     m_envmap_pass->resize(width, height);
     m_skybox_pass->resize(width, height);
+    m_ao_pass->resize(width, height);
 }

@@ -38,6 +38,8 @@ add_executable(engine
     src/envmap_pass.cpp
     src/skybox_pass.cpp
     src/brdf_lut_pass.cpp
+    src/screen_pass.cpp
+    src/ao_pass.cpp
     src/fbo.cpp
 
     src/imgui/imgui.cpp

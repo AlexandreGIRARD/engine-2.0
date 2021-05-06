@@ -2,10 +2,11 @@
 
 #include <glad/glad.h>
 
-Attachment::Attachment(unsigned int target, unsigned int width,unsigned int height, unsigned int format, unsigned int type)
+Attachment::Attachment(unsigned int target, unsigned int width,unsigned int height, unsigned int internal_format, unsigned int format, unsigned int type)
     : m_target(target)
     , m_width(width)
     , m_height(height)
+    , m_internal_format(internal_format)
     , m_format(format)
     , m_type(type)
 {
@@ -28,12 +29,13 @@ void Attachment::set_size(unsigned int width, unsigned int height)
 {
     if (m_target == GL_TEXTURE_2D)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, m_format, width, height, 0, m_format, m_type, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, m_internal_format, width, height, 0, m_format, m_type, nullptr);
     }
     else
     {
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         for (int i = 0; i < 6; i++)
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_format, width, height, 0, m_format, m_type, nullptr);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_internal_format, width, height, 0, m_format, m_type, nullptr);
     }
 }
 

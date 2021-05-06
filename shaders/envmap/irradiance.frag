@@ -6,7 +6,7 @@ layout (binding = 0) uniform samplerCube skybox;
 
 in vec3 pos;
 
-out vec4 frag_color;
+out vec3 frag_color;
 
 void main()
 {
@@ -36,5 +36,5 @@ void main()
     }
     irradiance = PI * irradiance * (1.0 / float(nb_samples));
     
-    frag_color = vec4(irradiance, 1.0);
+    frag_color = irradiance;
 }

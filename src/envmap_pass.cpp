@@ -29,9 +29,9 @@ EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
     m_specular_program->link();
 
     // Init attachments
-    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_FLOAT);
-    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 64, 64, GL_RGB, GL_FLOAT);
-    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_FLOAT);
+    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_RGB, GL_FLOAT);
+    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 128, 128, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB16F, GL_RGB, GL_FLOAT);
 
     // @Warning cest deg
     // Generate MipMap for specular, still binded
@@ -188,7 +188,7 @@ void EnvMap_Pass::render_irradiance()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
 
-    glViewport(0, 0, 64, 64);
+    glViewport(0, 0, 128, 128);
     render_cubemap(m_irradiance_program, m_attach_irradiance_cubemap);
     glViewport(0, 0, m_width, m_height);
 }

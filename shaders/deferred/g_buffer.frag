@@ -87,6 +87,7 @@ void main()
         normal = fs_in.normal;
     }
 
+
     // Emissive
     if (has_emissive_texture != 0)
         emissive = texture(emissive_sampler, fs_in.tex_coords[emissive_texcoord]).rgb;

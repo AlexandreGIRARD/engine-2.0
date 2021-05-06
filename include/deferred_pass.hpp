@@ -1,11 +1,11 @@
 #pragma once
 
-#include "render_pass.hpp"
+#include "screen_pass.hpp"
 
 class Light;
 using shared_light = std::shared_ptr<Light>;
 
-class Deferred_Pass : public Render_Pass
+class Deferred_Pass : public Screen_Pass
 {
 public:
     Deferred_Pass(unsigned int width, unsigned int height);
@@ -17,7 +17,7 @@ public:
 
     void set_lights(std::vector<shared_light> lights);
     void set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attchments);
-    void set_ssao_attachment(const shared_attachment occlusion_attachment);
+    void set_ssao_attachment(const std::vector<shared_attachment> ao_attachments);
     void set_ibl_attachments(const std::vector<shared_attachment> ibl_attchments);
     void set_brdf_lut_attachment(const std::vector<shared_attachment> brdf_lut_attachments);
 
@@ -26,11 +26,5 @@ public:
     shared_attachment m_attach_output;
 
 private:
-    void set_screen_quad();
-    void render_screen_quad();
-
-    unsigned int m_quad_vao;
-    unsigned int m_quad_vbo;
-
-    float m_ibl_factor = 0.4f;
+    float m_ibl_factor = 0.2f;
 };

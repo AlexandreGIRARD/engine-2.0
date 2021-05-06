@@ -19,6 +19,7 @@ class Deferred_Pass;
 class EnvMap_Pass;
 class Skybox_Pass;
 class BRDF_LUT_Pass;
+class AO_Pass;
 
 using shared_scene  = std::shared_ptr<Scene>;
 using shared_camera = std::shared_ptr<Camera>;
@@ -27,7 +28,7 @@ struct Renderer_Info
 {
     // Environment Map Infos
     int current_hdr_map = 0;
-    const char* hdr_files[2] = {"grass_field", "studio"};
+    const char* hdr_files[2] = {"studio", "grass_field"};
     //    
 };
 
@@ -64,6 +65,7 @@ private:
     EnvMap_Pass*   m_envmap_pass;
     Skybox_Pass*   m_skybox_pass;
     BRDF_LUT_Pass* m_brdf_lut_pass;
+    AO_Pass*       m_ao_pass;
 
     Renderer_Info m_infos;
 };
