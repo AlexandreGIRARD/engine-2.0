@@ -55,5 +55,5 @@ void main()
         occlusion += (depth >= _sample.z + 0.025 ? 1.0 : 0.0) * check;
     }
 
-    ambient_occlusion = 1.0 - (occlusion / kernel_size);
+    ambient_occlusion = 1.0 - pow(occlusion / kernel_size, 1.f / power) ;
 }

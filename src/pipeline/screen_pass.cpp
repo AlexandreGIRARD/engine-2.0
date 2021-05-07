@@ -1,6 +1,8 @@
-#include "screen_pass.hpp"
+#include "pipeline/screen_pass.hpp"
 
 #include <glad/glad.h>
+
+using namespace pipeline;
 
 Screen_Pass::Screen_Pass(unsigned int width, unsigned int height)
     : Render_Pass(width, height, false)

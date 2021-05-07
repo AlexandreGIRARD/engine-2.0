@@ -1,6 +1,8 @@
-#include "skybox_pass.hpp"
+#include "pipeline/skybox_pass.hpp"
 
 #include <glad/glad.h>
+
+using namespace pipeline;
 
 Skybox_Pass::Skybox_Pass(unsigned int width, unsigned int height)
     : Render_Pass(width, height, false)

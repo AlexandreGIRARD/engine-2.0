@@ -1,9 +1,11 @@
-#include "envmap_pass.hpp"
+#include "pipeline/envmap_pass.hpp"
 
 #include "texture.hpp"
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
+
+using namespace pipeline;
 
 EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
     : Render_Pass(width, height, false)

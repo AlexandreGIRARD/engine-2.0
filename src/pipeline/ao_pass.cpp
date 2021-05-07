@@ -1,4 +1,4 @@
-#include "ao_pass.hpp"
+#include "pipeline/ao_pass.hpp"
 
 #include <random>
 #include <glad/glad.h>
@@ -8,17 +8,19 @@
 
 #define KERNEL_SIZE 64
 
+using namespace pipeline;
+
 AO_Pass::AO_Pass(unsigned int width, unsigned int height)
     : Screen_Pass(width, height)    
 {
     // Init program
-    m_program->add_shader("ambient_occlusion/ssao.vert", GL_VERTEX_SHADER);
+    m_program->add_shader("utils/screen_quad.vert", GL_VERTEX_SHADER);
     m_program->add_shader("ambient_occlusion/ssao.frag", GL_FRAGMENT_SHADER);
     m_program->link();
 
     // Init blur program
     m_blur_program = std::make_shared<Program>();
-    m_blur_program->add_shader("ambient_occlusion/ssao.vert", GL_VERTEX_SHADER);
+    m_blur_program->add_shader("utils/screen_quad.vert", GL_VERTEX_SHADER);
     m_blur_program->add_shader("ambient_occlusion/blur.frag", GL_FRAGMENT_SHADER);
     m_blur_program->link();   
 

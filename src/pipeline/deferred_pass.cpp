@@ -1,14 +1,16 @@
-#include "deferred_pass.hpp"
+#include "pipeline/deferred_pass.hpp"
 
 #include <glad/glad.h>
 
 #include "light.hpp"
 
+using namespace pipeline;
+
 Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
     : Screen_Pass(width, height)    
 {
     // Init program
-    m_program->add_shader("deferred/deferred.vert", GL_VERTEX_SHADER);
+    m_program->add_shader("utils/screen_quad.vert", GL_VERTEX_SHADER);
     m_program->add_shader("deferred/deferred.frag", GL_FRAGMENT_SHADER);
     m_program->link();
 

@@ -1,6 +1,8 @@
-#include "g_buffer_pass.hpp"
+#include "pipeline/g_buffer_pass.hpp"
 
 #include <glad/glad.h>
+
+using namespace pipeline;
 
 G_Buffer_Pass::G_Buffer_Pass(unsigned int width, unsigned int height)
     : Render_Pass(width, height, true)

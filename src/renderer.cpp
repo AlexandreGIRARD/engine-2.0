@@ -4,14 +4,9 @@
 
 #include "scene.hpp"
 #include "camera.hpp"
-#include "render_pass.hpp"
 #include "utils.hpp"
-#include "g_buffer_pass.hpp"
-#include "deferred_pass.hpp"
-#include "envmap_pass.hpp"
-#include "skybox_pass.hpp"
-#include "brdf_lut_pass.hpp"
-#include "ao_pass.hpp"
+
+#include "pipeline/all_passes.hpp"
 
 static bool camera_reset_pos;
 static bool move;
@@ -107,12 +102,13 @@ bool Renderer::init_imgui()
 
 bool Renderer::init_pipeline()
 {
-    m_gbuffer_pass  = new G_Buffer_Pass(m_width, m_height);
-    m_deferred_pass = new Deferred_Pass(m_width, m_height);
-    m_envmap_pass   = new EnvMap_Pass(m_width, m_height);
-    m_skybox_pass   = new Skybox_Pass(m_width, m_height);
-    m_brdf_lut_pass = new BRDF_LUT_Pass(m_width, m_height);
-    m_ao_pass       = new AO_Pass(m_width, m_height);
+    m_gbuffer_pass  = new pipeline::G_Buffer_Pass(m_width, m_height);
+    m_deferred_pass = new pipeline::Deferred_Pass(m_width, m_height);
+    m_envmap_pass   = new pipeline::EnvMap_Pass(m_width, m_height);
+    m_skybox_pass   = new pipeline::Skybox_Pass(m_width, m_height);
+    m_brdf_lut_pass = new pipeline::BRDF_LUT_Pass(m_width, m_height);
+    m_ao_pass       = new pipeline::AO_Pass(m_width, m_height);
+    m_debug_pass    = new pipeline::Debug_Pass(m_width, m_height);
     return true;
 }
 
@@ -188,6 +184,12 @@ void Renderer::update_imgui()
     ImGui::Text("Ambient Occlusion Settings");
     ImGui::SliderFloat("Radius", m_ao_pass->get_radius(), 0.001f, 1.0f);
     ImGui::SliderFloat("Power", m_ao_pass->get_power(), 0.5f, 10.f);
+    ImGui::Separator();
+
+    // Debug Texture Mode
+    ImGui::Checkbox("Debug Texture Mode", &m_infos.debug);
+    if (m_infos.debug)
+        ImGui::Combo("Mode", (int*)&m_infos.mode, m_infos.modes, sizeof(m_infos.modes) / sizeof(char*));
 
     if (ImGui::TreeNode("FX"))
     {
@@ -234,7 +236,13 @@ void Renderer::render(double xpos, double ypos)
     m_skybox_pass->blit_buffers(m_deferred_pass->get_fbo(), m_gbuffer_pass->get_fbo());
     m_skybox_pass->render(m_camera, m_scene);
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_skybox_pass->get_fbo()->get_name());
+    // FBO name to blit
+    int fbo_name = m_skybox_pass->get_fbo()->get_name();
+    if (m_infos.debug)
+        fbo_name = render_debug();
+
+    // Blit
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_name);
     glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -246,4 +254,42 @@ void Renderer::resize(unsigned int width, unsigned int height)
     m_envmap_pass->resize(width, height);
     m_skybox_pass->resize(width, height);
     m_ao_pass->resize(width, height);
+    m_debug_pass->resize(width, height);
+}
+
+int Renderer::render_debug()
+{
+    shared_attachment attach;
+
+    if (m_infos.mode != Debug_Mode::AMBIENT_OCCLUSION)
+    {
+        auto attachments = m_gbuffer_pass->get_attachments();
+        switch (m_infos.mode)
+        {
+        case Debug_Mode::G_POSITION:
+            attach = attachments[0];
+            break;
+        case Debug_Mode::G_COLOR:
+            attach = attachments[1];
+            break;
+        case Debug_Mode::G_EMISSIVE:
+            attach = attachments[3];
+            break;
+        case Debug_Mode::G_NORMAL:
+            attach = attachments[4];
+            break;
+        default:
+            attach = attachments[2];
+            break;
+        }
+    }
+    else
+    {
+        attach = m_ao_pass->get_attachments()[1]; // We take second one, blur
+    }
+
+    m_debug_pass->set_attachment(attach, static_cast<int>(m_infos.mode));
+    m_debug_pass->render(nullptr, nullptr);
+
+    return m_debug_pass->get_fbo()->get_name();
 }

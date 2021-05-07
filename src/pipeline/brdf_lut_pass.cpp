@@ -1,12 +1,14 @@
-#include "brdf_lut_pass.hpp"
+#include "pipeline/brdf_lut_pass.hpp"
 
 #include <glad/glad.h>
+
+using namespace pipeline;
 
 BRDF_LUT_Pass::BRDF_LUT_Pass(unsigned int width, unsigned int height)
     : Screen_Pass(width, height)
 {
-    m_program->add_shader("brdf_lut/generate.vert", GL_VERTEX_SHADER);
-    m_program->add_shader("brdf_lut/generate.frag", GL_FRAGMENT_SHADER);
+    m_program->add_shader("utils/screen_quad.vert", GL_VERTEX_SHADER);
+    m_program->add_shader("utils/brdf_lut.frag", GL_FRAGMENT_SHADER);
     m_program->link();
 
     m_attach_lut = std::make_shared<Attachment>(GL_TEXTURE_2D, 512, 512, GL_RG16F, GL_RG, GL_FLOAT);

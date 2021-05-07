@@ -33,15 +33,19 @@ add_executable(engine
     src/program.cpp
     src/renderer.cpp
     src/texture.cpp
-    src/g_buffer_pass.cpp
-    src/deferred_pass.cpp
-    src/envmap_pass.cpp
-    src/skybox_pass.cpp
-    src/brdf_lut_pass.cpp
-    src/screen_pass.cpp
-    src/ao_pass.cpp
     src/fbo.cpp
 
+    # Render Passes
+    src/pipeline/g_buffer_pass.cpp
+    src/pipeline/deferred_pass.cpp
+    src/pipeline/envmap_pass.cpp
+    src/pipeline/skybox_pass.cpp
+    src/pipeline/brdf_lut_pass.cpp
+    src/pipeline/screen_pass.cpp
+    src/pipeline/ao_pass.cpp
+    src/pipeline/debug_pass.cpp
+
+    # ImGui
     src/imgui/imgui.cpp
     src/imgui/imgui_demo.cpp
     src/imgui/imgui_draw.cpp
