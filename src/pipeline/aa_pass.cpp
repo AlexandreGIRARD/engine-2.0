@@ -41,6 +41,7 @@ void AA_Pass::render(Camera* camera, Scene* scene)
 {
     m_program->use();
     m_program->addUniformVec2(glm::vec2{1.f / m_width, 1.f / m_height}, "inv_scren_size");
+    m_program->addUniformInt(static_cast<int>(m_is_debug), "is_debug");
 
     render_screen_quad();
 }

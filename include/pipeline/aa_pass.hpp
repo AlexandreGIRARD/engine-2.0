@@ -19,7 +19,9 @@ namespace pipeline
 
         shared_attachment m_attach_output;
 
+        bool* get_debug() { return &m_is_debug; }
 
     private:
+        bool m_is_debug = false;
     };
 }

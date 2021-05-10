@@ -191,7 +191,11 @@ void Renderer::update_imgui()
     ImGui::Checkbox("Debug Texture Mode", &m_infos.debug);
     if (m_infos.debug)
         ImGui::Combo("Mode", (int*)&m_infos.mode, m_infos.modes, sizeof(m_infos.modes) / sizeof(char*));
-
+    // Anti Aliasing 
+    ImGui::Checkbox("Anti-Aliasing (FXAA)", &m_infos.aa_activated);
+    if (m_infos.aa_activated)
+        ImGui::Checkbox("Debug", m_aa_pass->get_debug());
+    
     if (ImGui::TreeNode("FX"))
     {
         ImGui::TreePop();
@@ -238,12 +242,23 @@ void Renderer::render(double xpos, double ypos)
     m_skybox_pass->render(m_camera, m_scene);
 
     // FBO name to blit
+    auto attachments = m_skybox_pass->get_attachments();
     int fbo_name = m_skybox_pass->get_fbo()->get_name();
     if (m_infos.debug)
+    {
         fbo_name = render_debug();
+        attachments = m_debug_pass->get_attachments();
+    }
 
-    m_aa_pass->set_frame_attachments(m_deferred_pass->get_attachments());
-    m_aa_pass->render(nullptr, nullptr);
+    // Anti-Aliasing
+    if (m_infos.aa_activated)
+    {
+        m_aa_pass->set_frame_attachments(attachments);
+        m_aa_pass->render(nullptr, nullptr);
+        fbo_name = m_aa_pass->get_fbo()->get_name();
+    }
+
+    // FX 
 
     // Blit
     glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_name);

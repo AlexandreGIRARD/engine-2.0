@@ -53,6 +53,9 @@ struct Renderer_Info
     bool debug = false;
     Debug_Mode mode = Debug_Mode::G_POSITION; 
     const char* modes[8] = {"Position", "Base Color", "Normal", "Metallic", "Roughness", "Emissive", "Ambient-Occlusion", "SSAO"};
+
+    // Anti-Aliasing infos
+    bool aa_activated = true;
 };
 
 class Renderer
