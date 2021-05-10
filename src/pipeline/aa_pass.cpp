@@ -40,7 +40,7 @@ void AA_Pass::resize(unsigned int width, unsigned int height)
 void AA_Pass::render(Camera* camera, Scene* scene)
 {
     m_program->use();
-    m_program->addUniformVec2(glm::vec2{1.f / m_width, 1.f / m_height}, "inv_screen_size");
+    m_program->addUniformVec2(glm::vec2{1.f / m_width, 1.f / m_height}, "inv_scren_size");
 
     render_screen_quad();
 }
