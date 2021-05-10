@@ -24,8 +24,6 @@ Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
 
 Deferred_Pass::~Deferred_Pass()
 {
-    glDeleteBuffers(1, &m_quad_vao);
-    glDeleteVertexArrays(1, &m_quad_vao);
 }
 
 const std::vector<shared_attachment> Deferred_Pass::get_attachments()

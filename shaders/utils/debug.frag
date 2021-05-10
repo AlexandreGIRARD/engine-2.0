@@ -25,6 +25,8 @@ void main()
         debug_output = vec4(info.b);
     else if (mode == G_ROUGHNESS)
         debug_output = vec4(info.g);
+    else if (mode == G_AO)
+        debug_output = vec4(info.r);
     else if (mode == AMBIENT_OCCLUSION)
         debug_output = vec4(info.r);
 }

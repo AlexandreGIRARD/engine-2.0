@@ -23,6 +23,7 @@ namespace pipeline
     class Skybox_Pass;
     class BRDF_LUT_Pass;
     class AO_Pass;
+    class AA_Pass;
     class Debug_Pass;
 }
 
@@ -89,6 +90,7 @@ private:
     pipeline::Skybox_Pass*   m_skybox_pass;
     pipeline::BRDF_LUT_Pass* m_brdf_lut_pass;
     pipeline::AO_Pass*       m_ao_pass;
+    pipeline::AA_Pass*       m_aa_pass;
     pipeline::Debug_Pass*    m_debug_pass;
 
     Renderer_Info m_infos;

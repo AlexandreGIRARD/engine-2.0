@@ -57,6 +57,10 @@ void main()
     else
         base_color = base_color_factor;
     
+    // Temporary for non-opaque 
+    if (base_color.a == 0)
+        discard;
+
     // Occlusion
     if (has_occlusion_texture != 0)
         orm.r = texture(occlusion_sampler, fs_in.tex_coords[occlusion_texcoord]).r;

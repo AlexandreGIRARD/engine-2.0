@@ -161,7 +161,7 @@ namespace utils
 
     GLFWwindow *init_window(unsigned int width, unsigned int height)
     {
-        GLFWwindow *window = glfwCreateWindow(width, height, "PBR-Engine v0.1", NULL, NULL);
+        GLFWwindow *window = glfwCreateWindow(width, height, "PBR-Engine v0.2", NULL, NULL);
         if (!window)
         {
             std::cout << "Failed to create GLFW window" << std::endl;

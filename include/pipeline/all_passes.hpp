@@ -6,4 +6,5 @@
 #include "skybox_pass.hpp"
 #include "brdf_lut_pass.hpp"
 #include "ao_pass.hpp"
+#include "aa_pass.hpp"
 #include "debug_pass.hpp"

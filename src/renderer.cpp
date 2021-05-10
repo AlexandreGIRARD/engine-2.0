@@ -108,6 +108,7 @@ bool Renderer::init_pipeline()
     m_skybox_pass   = new pipeline::Skybox_Pass(m_width, m_height);
     m_brdf_lut_pass = new pipeline::BRDF_LUT_Pass(m_width, m_height);
     m_ao_pass       = new pipeline::AO_Pass(m_width, m_height);
+    m_aa_pass       = new pipeline::AA_Pass(m_width, m_height);
     m_debug_pass    = new pipeline::Debug_Pass(m_width, m_height);
     return true;
 }
@@ -241,6 +242,9 @@ void Renderer::render(double xpos, double ypos)
     if (m_infos.debug)
         fbo_name = render_debug();
 
+    m_aa_pass->set_frame_attachments(m_deferred_pass->get_attachments());
+    m_aa_pass->render(nullptr, nullptr);
+
     // Blit
     glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_name);
     glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
@@ -254,6 +258,7 @@ void Renderer::resize(unsigned int width, unsigned int height)
     m_envmap_pass->resize(width, height);
     m_skybox_pass->resize(width, height);
     m_ao_pass->resize(width, height);
+    m_aa_pass->resize(width, height);
     m_debug_pass->resize(width, height);
 }
 
