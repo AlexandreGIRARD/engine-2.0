@@ -21,7 +21,7 @@ It's a deferred rendering engine based on the glTF file format.
 - Water Rendering
 
 ## To Implement
-See issues
+See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
 - Bloom
 - Depth of Field
 - Specular Glossiness Workflow
@@ -30,7 +30,7 @@ See issues
   - Chromatic Aberration
   - Lens-Flare  
 - Other Anti-Aliasing Algorithms
-- Other Ambien Occlusion Algorithms
+- Other Ambient Occlusion Algorithms
 
 
 ## Libraries
