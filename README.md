@@ -1,6 +1,6 @@
 # PBR Engine
 
-This is my second OpenGL engine were the purpose of this project is to learn other rendering techniques and improve both my C++ and OpenGL knowledge.
+This is my second OpenGL engine where the purpose of this project is to learn other rendering techniques and improve both my C++ and OpenGL knowledge.
 
 It's a deferred rendering engine based on the glTF file format. 
 
@@ -15,12 +15,12 @@ It's a deferred rendering engine based on the glTF file format.
 - Fast Approximate Anti-Aliasing
 - Debug Mode
 
-### To transfer from the old Engine
+### Need to be transfered from the old Engine
 - Shadow Mapping (Both Directional and Point)
 - Relief Mapping
 - Water Rendering
 
-### To Implement
+### Coming Soon
 See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
 - Bloom
 - Depth of Field
@@ -30,7 +30,7 @@ See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
   - Chromatic Aberration
   - Lens-Flare  
 - Other Anti-Aliasing Algorithms
-- Other Ambient Occlusion Algorithms
+- Other Ambien Occlusion Algorithms
 
 
 ## Libraries
@@ -40,6 +40,6 @@ See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
 - [GLM](https://glm.g-truc.net/0.9.2/api/index.html) --> Mathematic library
 - [STB](https://github.com/nothings/stb) --> Image loader
 
-## Results
 
+## Results
 [Youtube Video](https://www.youtube.com/watch?v=GBET792NKIw)
