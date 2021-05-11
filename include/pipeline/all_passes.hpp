@@ -8,3 +8,4 @@
 #include "ao_pass.hpp"
 #include "aa_pass.hpp"
 #include "debug_pass.hpp"
+#include "bloom_pass.hpp"

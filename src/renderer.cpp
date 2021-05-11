@@ -110,6 +110,7 @@ bool Renderer::init_pipeline()
     m_ao_pass       = new pipeline::AO_Pass(m_width, m_height);
     m_aa_pass       = new pipeline::AA_Pass(m_width, m_height);
     m_debug_pass    = new pipeline::Debug_Pass(m_width, m_height);
+    m_bloom_pass    = new pipeline::Bloom_Pass(m_width, m_height);
     return true;
 }
 
@@ -191,11 +192,20 @@ void Renderer::update_imgui()
     ImGui::Checkbox("Debug Texture Mode", &m_infos.debug);
     if (m_infos.debug)
         ImGui::Combo("Mode", (int*)&m_infos.mode, m_infos.modes, sizeof(m_infos.modes) / sizeof(char*));
+    
     // Anti Aliasing 
     ImGui::Checkbox("Anti-Aliasing (FXAA)", &m_infos.aa_activated);
     if (m_infos.aa_activated)
         ImGui::Checkbox("Debug", m_aa_pass->get_debug());
     
+    // Bloom
+    ImGui::Checkbox("Bloom", &m_infos.bloom_activated);
+    if (m_infos.bloom_activated)
+    {
+        ImGui::SliderFloat("Threshold", m_bloom_pass->get_threshold(), 0.f, 1.f);
+        ImGui::SliderFloat("Strength", m_bloom_pass->get_strength(), 0.5f, 2.f);
+    }
+
     if (ImGui::TreeNode("FX"))
     {
         ImGui::TreePop();
@@ -256,6 +266,16 @@ void Renderer::render(double xpos, double ypos)
         m_aa_pass->set_frame_attachments(attachments);
         m_aa_pass->render(nullptr, nullptr);
         fbo_name = m_aa_pass->get_fbo()->get_name();
+        attachments = m_aa_pass->get_attachments();
+    }
+
+    // Bloom
+    if (m_infos.bloom_activated)
+    {
+        m_bloom_pass->set_frame_attachments(attachments);
+        m_bloom_pass->render(nullptr, nullptr);
+        //fbo_name = m_bloom_pass->get_fbo()->get_name();
+        //attachments = m_bloom_pass->get_attachments();
     }
 
     // FX 
@@ -275,6 +295,7 @@ void Renderer::resize(unsigned int width, unsigned int height)
     m_ao_pass->resize(width, height);
     m_aa_pass->resize(width, height);
     m_debug_pass->resize(width, height);
+    m_bloom_pass->resize(width, height);
 }
 
 int Renderer::render_debug()

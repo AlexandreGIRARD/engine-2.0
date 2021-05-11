@@ -45,6 +45,7 @@ add_executable(engine
     src/pipeline/ao_pass.cpp
     src/pipeline/debug_pass.cpp
     src/pipeline/aa_pass.cpp
+    src/pipeline/bloom_pass.cpp
 
     # ImGui
     src/imgui/imgui.cpp

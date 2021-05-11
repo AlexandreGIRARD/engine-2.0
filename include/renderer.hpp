@@ -25,6 +25,7 @@ namespace pipeline
     class AO_Pass;
     class AA_Pass;
     class Debug_Pass;
+    class Bloom_Pass;
 }
 
 using shared_scene  = std::shared_ptr<Scene>;
@@ -54,8 +55,9 @@ struct Renderer_Info
     Debug_Mode mode = Debug_Mode::G_POSITION; 
     const char* modes[8] = {"Position", "Base Color", "Normal", "Metallic", "Roughness", "Emissive", "Ambient-Occlusion", "SSAO"};
 
-    // Anti-Aliasing infos
+    // Activated features
     bool aa_activated = true;
+    bool bloom_activated = true;
 };
 
 class Renderer
@@ -95,6 +97,7 @@ private:
     pipeline::AO_Pass*       m_ao_pass;
     pipeline::AA_Pass*       m_aa_pass;
     pipeline::Debug_Pass*    m_debug_pass;
+    pipeline::Bloom_Pass*    m_bloom_pass;
 
     Renderer_Info m_infos;
 };
