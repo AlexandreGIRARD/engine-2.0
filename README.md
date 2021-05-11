@@ -15,12 +15,12 @@ It's a deferred rendering engine based on the glTF file format.
 - Fast Approximate Anti-Aliasing
 - Debug Mode
 
-## To transfer from the old Engine
+### To transfer from the old Engine
 - Shadow Mapping (Both Directional and Point)
 - Relief Mapping
 - Water Rendering
 
-## To Implement
+### To Implement
 See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
 - Bloom
 - Depth of Field
