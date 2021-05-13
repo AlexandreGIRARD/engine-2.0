@@ -25,7 +25,7 @@ void Scene::init_lights(tinygltf::Model& model, tinygltf::Scene& scene)
         shared_light light = m_lights[it->second.Get("light").GetNumberAsInt()];
 
         // Can create the lights
-        if (light->get_type() == Light_Type::POINT) 
+        if (light->get_type() == Light_Type::POINT_LIGHT) 
         {
             light->set_position(glm::vec3{current_node.translation[0], current_node.translation[1], current_node.translation[2]});
         }
@@ -108,7 +108,7 @@ shared_light Scene::get_sunlight()
 {
     for (auto light : m_lights)
     {
-        if (light->get_type() == Light_Type::DIRECTIONAL)
+        if (light->get_type() == Light_Type::DIRECTIONAL_LIGHT)
             return light;
     }
     return nullptr;

@@ -8,6 +8,7 @@ struct Attachment
     ~Attachment();
     void set_size(unsigned int width, unsigned int height);
     void resize(unsigned int width, unsigned int height);
+    void generate_mipmap();
 
     unsigned int m_target;
     unsigned int m_width;

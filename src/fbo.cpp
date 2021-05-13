@@ -48,6 +48,13 @@ void Attachment::resize(unsigned int width, unsigned int height)
     set_size(width, height);
 }
 
+void Attachment::generate_mipmap()
+{
+    glBindTexture(m_target, m_name);
+    glTexParameteri(m_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(m_target);
+}
+
 FBO::FBO()
 {
     glGenFramebuffers(1, &m_name);

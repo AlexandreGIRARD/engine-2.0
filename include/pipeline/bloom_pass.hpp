@@ -2,8 +2,10 @@
 
 #include "pipeline/screen_pass.hpp"
 
+#define BLUR_LEVELS 4 
+
 namespace pipeline
-{
+{  
     class Bloom_Pass : public Screen_Pass
     {
     public:
@@ -17,12 +19,9 @@ namespace pipeline
         void set_frame_attachments(const std::vector<shared_attachment> g_frame_attachments);
 
         shared_attachment m_attach_brightness;
-        shared_attachment m_attach_bloom1;
-        shared_attachment m_attach_bloom2;
-        shared_attachment m_attach_bloom3;
-        shared_attachment m_attach_bloom1_bis;
-        shared_attachment m_attach_bloom2_bis;
-        shared_attachment m_attach_bloom3_bis;
+        shared_attachment m_attach_bloom_first[BLUR_LEVELS];
+        shared_attachment m_attach_bloom_second[BLUR_LEVELS];
+        shared_attachment m_attach_output;
 
         float* get_threshold() { return &m_threshold; }
         float* get_strength() { return &m_strength; }
@@ -32,8 +31,9 @@ namespace pipeline
         shared_program m_gaussian_program;
         shared_program m_brightness_program;
 
+        unsigned int m_frame_name;
 
-        float m_threshold = 0.75f;
+        float m_threshold = 0.5f;
         float m_strength  = 1.0f;
     };
 }

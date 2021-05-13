@@ -41,6 +41,22 @@ void Screen_Pass::render_screen_quad()
     m_fbo->bind();
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
     
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Render call
+    glBindVertexArray(m_quad_vao);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+
+    m_fbo->unbind();
+}
+
+void Screen_Pass::render_screen_quad(int size, unsigned int* buffers)
+{
+    // Framebuffer Binding Points
+    m_fbo->bind();
+    glDrawBuffers(size, buffers);
+    
     // Disable depth test
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);

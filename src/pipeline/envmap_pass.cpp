@@ -34,11 +34,7 @@ EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
     m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_RGB, GL_FLOAT);
     m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 128, 128, GL_RGB16F, GL_RGB, GL_FLOAT);
     m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB16F, GL_RGB, GL_FLOAT);
-
-    // @Warning cest deg
-    // Generate MipMap for specular, still binded
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    m_attach_specular_cubemap->generate_mipmap();
 
     // Init Cube
     set_cube();

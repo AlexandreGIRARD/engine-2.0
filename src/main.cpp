@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cmath>
-#include <filesystem>
 #include <memory>
 
 #include "renderer.hpp"

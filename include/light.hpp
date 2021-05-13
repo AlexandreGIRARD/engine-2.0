@@ -11,9 +11,9 @@ using shared_program = std::shared_ptr<Program>;
 
 enum Light_Type
 {
-    DIRECTIONAL,
-    POINT,
-    SPOT,
+    DIRECTIONAL_LIGHT,
+    POINT_LIGHT,
+    SPOT_LIGHT,
 };
 
 class Light

@@ -274,8 +274,8 @@ void Renderer::render(double xpos, double ypos)
     {
         m_bloom_pass->set_frame_attachments(attachments);
         m_bloom_pass->render(nullptr, nullptr);
-        //fbo_name = m_bloom_pass->get_fbo()->get_name();
-        //attachments = m_bloom_pass->get_attachments();
+        fbo_name = m_bloom_pass->get_fbo()->get_name();
+        attachments = m_bloom_pass->get_attachments();
     }
 
     // FX 

@@ -57,10 +57,10 @@ void Deferred_Pass::set_lights(std::vector<shared_light> lights)
     {
         switch (light->get_type())
         {
-        case Light_Type::POINT:
+        case Light_Type::POINT_LIGHT:
             light->bind(m_program, id_point_light++);
             break;
-        case Light_Type::SPOT:
+        case Light_Type::SPOT_LIGHT:
             light->bind(m_program, id_spot_light++);
         default:
             light->bind(m_program, 0);

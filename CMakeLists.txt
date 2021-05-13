@@ -64,7 +64,17 @@ include(CPack)
 target_compile_definitions(engine PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
 target_link_libraries(engine glfw)
 
-add_custom_command(
-    TARGET engine POST_BUILD
-    COMMAND cp engine ${CMAKE_CURRENT_SOURCE_DIR}
-    VERBATIM)
+# Copy back to root dir of project for 
+
+if (UNIX)
+    add_custom_command(
+        TARGET engine POST_BUILD
+        COMMAND cp engine ${CMAKE_CURRENT_SOURCE_DIR}
+        VERBATIM)
+endif(UNIX)
+if (WIN32)
+    add_custom_command(
+        TARGET engine POST_BUILD
+        COMMAND copy engine.exe .. # Ugly but it just needs to work for now
+        VERBATIM)
+endif(WIN32)

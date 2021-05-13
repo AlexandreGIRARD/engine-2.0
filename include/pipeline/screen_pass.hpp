@@ -16,6 +16,7 @@ namespace pipeline
     protected:
         void set_screen_quad();
         void render_screen_quad();
+        void render_screen_quad(int size, unsigned int* buffers);
 
         unsigned int m_quad_vao;
         unsigned int m_quad_vbo;
