@@ -13,7 +13,7 @@ AA_Pass::AA_Pass(unsigned int width, unsigned int height)
     m_program->link();
 
     // Init Attachment
-    m_attach_output = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_output = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB16F, GL_RGB, GL_FLOAT);
 
     // Init Framebuffer
     m_fbo->bind();

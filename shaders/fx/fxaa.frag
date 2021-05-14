@@ -12,7 +12,7 @@ uniform int is_debug;
 
 in vec2 frag_uv;
 
-out vec4 frag_output;
+out vec3 frag_output;
 
 // References:
 // Presentation slides: http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
@@ -45,12 +45,12 @@ void main()
 	
 	// If the luma variation is lower that a threshold (or if we are in a really dark area), we are not on an edge, don't perform any AA.
 	if(range < max(FXAA_EDGE_THRESHOLD_MIN,range_max*FXAA_EDGE_THRESHOLD_MAX)){
-		frag_output = vec4(center, 1.0);
+		frag_output = center;
 		return;
 	}
     if (is_debug == 1)
     {
-        frag_output = vec4(1, 0, 0, 1);
+        frag_output = vec3(1, 0, 0);
         return;
     }
 	
@@ -195,7 +195,6 @@ void main()
 	
 	// Read the color at the new UV coordinates, and use it.
 	vec3 finalColor = texture(frame_tex, final_uv).rgb;
-	frag_output = vec4(finalColor, 1.0);
-    // frag_output = vec4(1,0,0,1);
+	frag_output = finalColor;
 	
 }

@@ -73,7 +73,7 @@ uniform vec3 cam_pos;
 in vec2 frag_uv;
 
 // Output Attachment
-layout (location = 0) out vec4 deferred_output;
+layout (location = 0) out vec3 deferred_output;
 
 // Cook-Terance BRF equation
 // More here http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
@@ -180,10 +180,5 @@ void main()
     color = mix(color, color * ao, 1.0);
 	color += emissive;
 
-    // HDR tonemapping
-    color = color / (color + vec3(1.0));
-    // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
-
-    deferred_output = vec4(color, 1.0);
+    deferred_output = color;
 }

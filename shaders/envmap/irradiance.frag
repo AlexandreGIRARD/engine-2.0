@@ -30,7 +30,7 @@ void main()
             // tangent space to world
             vec3 sample_vec = tangent_sample.x * right + tangent_sample.y * up + tangent_sample.z * N; 
 
-            irradiance += texture(skybox, sample_vec).rgb * cos(theta) * sin(theta);
+            irradiance += textureLod(skybox, sample_vec, 0).rgb * cos(theta) * sin(theta);
             nb_samples++;
         }
     }

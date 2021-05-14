@@ -31,9 +31,9 @@ EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
     m_specular_program->link();
 
     // Init attachments
-    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB, GL_RGB, GL_FLOAT);
-    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 128, 128, GL_RGB16F, GL_RGB, GL_FLOAT);
-    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 64,   64, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB16F, GL_RGB, GL_FLOAT);
     m_attach_specular_cubemap->generate_mipmap();
 
     // Init Cube
@@ -172,7 +172,7 @@ void EnvMap_Pass::render_skybox()
 {
     m_program->use();
     m_hdr_tex->bind(m_program, 0, "hdr_map");
-    glViewport(0, 0, 512, 512);
+    glViewport(0, 0, m_attach_skybox_map->m_width, m_attach_skybox_map->m_height);
     render_cubemap(m_program, m_attach_skybox_map);
     glViewport(0, 0, m_width, m_height);
 }
@@ -186,7 +186,7 @@ void EnvMap_Pass::render_irradiance()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
 
-    glViewport(0, 0, 128, 128);
+    glViewport(0, 0, m_attach_irradiance_cubemap->m_width, m_attach_irradiance_cubemap->m_height);
     render_cubemap(m_irradiance_program, m_attach_irradiance_cubemap);
     glViewport(0, 0, m_width, m_height);
 }
@@ -196,15 +196,15 @@ void EnvMap_Pass::render_specular()
     m_specular_program->use();
 
     // Skybox Cubemap binding
+    m_attach_skybox_map->generate_mipmap();
     m_specular_program->addUniformTexture(0, "skybox");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
 
-    int size = 512;
     int max_level = 5;
     for (int level = 0; level < max_level; level++)
     {
-        size = 512 * std::pow(0.5, level);
+        int size = m_attach_specular_cubemap->m_width * std::pow(0.5, level);
         glViewport(0, 0, size, size);
 
         float roughness = static_cast<float>(level) / static_cast<float>(max_level - 1);

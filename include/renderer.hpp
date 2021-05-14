@@ -26,6 +26,7 @@ namespace pipeline
     class AA_Pass;
     class Debug_Pass;
     class Bloom_Pass;
+    class HDR_Pass;
 }
 
 using shared_scene  = std::shared_ptr<Scene>;
@@ -47,17 +48,20 @@ enum Debug_Mode
 struct Renderer_Info
 {
     // Environment Map Infos
-    int current_hdr_map = 0;
-    const char* hdr_files[2] = {"studio", "grass_field"};
+    int current_hdr_map = 1;
+    const char* hdr_files[2] = {"studio", "loft"};
     
     // Debug Texture mode Infos
     bool debug = false;
     Debug_Mode mode = Debug_Mode::G_POSITION; 
     const char* modes[8] = {"Position", "Base Color", "Normal", "Metallic", "Roughness", "Emissive", "Ambient-Occlusion", "SSAO"};
 
+    // Tone Mapping
+    const char* tone_mapping[2] = {"Basic", "ACCES Filmic"};
+
     // Activated features
-    bool aa_activated = true;
-    bool bloom_activated = true;
+    bool aa_activated = false;
+    bool bloom_activated = false;
 };
 
 class Renderer
@@ -98,6 +102,7 @@ private:
     pipeline::AA_Pass*       m_aa_pass;
     pipeline::Debug_Pass*    m_debug_pass;
     pipeline::Bloom_Pass*    m_bloom_pass;
+    pipeline::HDR_Pass*      m_hdr_pass;
 
     Renderer_Info m_infos;
 };

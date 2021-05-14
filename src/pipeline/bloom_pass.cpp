@@ -23,15 +23,15 @@ Bloom_Pass::Bloom_Pass(unsigned int width, unsigned int height)
     m_gaussian_program->link();
 
     // Init Attachment
-    m_attach_brightness    = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_brightness    = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB16F, GL_RGB, GL_FLOAT);
     
     for (int level = 0; level < BLUR_LEVELS; level++)
     {
         float coef = std::pow(0.5, level);
-        m_attach_bloom_first[level]  = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width * coef, m_height * coef, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
-        m_attach_bloom_second[level] = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width * coef, m_height * coef, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+        m_attach_bloom_first[level]  = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width * coef, m_height * coef, GL_RGB16F, GL_RGB, GL_FLOAT);
+        m_attach_bloom_second[level] = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width * coef, m_height * coef, GL_RGB16F, GL_RGB, GL_FLOAT);
     }
-    m_attach_output       = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_output       = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB16F, GL_RGB, GL_FLOAT);
 }
 
 Bloom_Pass::~Bloom_Pass()

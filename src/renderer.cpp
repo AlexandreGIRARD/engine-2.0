@@ -8,6 +8,8 @@
 
 #include "pipeline/all_passes.hpp"
 
+#define ARRAY_SIZE(array) sizeof(array) / sizeof(char*) 
+
 static bool camera_reset_pos;
 static bool move;
 
@@ -111,6 +113,7 @@ bool Renderer::init_pipeline()
     m_aa_pass       = new pipeline::AA_Pass(m_width, m_height);
     m_debug_pass    = new pipeline::Debug_Pass(m_width, m_height);
     m_bloom_pass    = new pipeline::Bloom_Pass(m_width, m_height);
+    m_hdr_pass      = new pipeline::HDR_Pass(m_width, m_height);
     return true;
 }
 
@@ -178,7 +181,7 @@ void Renderer::update_imgui()
 
     // Environment settings
     ImGui::Text("Environment Settings:");
-    ImGui::Combo("Current Environment", &m_infos.current_hdr_map, m_infos.hdr_files, sizeof(m_infos.hdr_files) / sizeof(char*));
+    ImGui::Combo("Current Environment", &m_infos.current_hdr_map, m_infos.hdr_files, ARRAY_SIZE(m_infos.hdr_files));
     ImGui::SliderFloat("IBL Factor", m_deferred_pass->get_ibl_factor(), 0.f, 1.f);
     ImGui::Separator();
 
@@ -189,10 +192,13 @@ void Renderer::update_imgui()
     ImGui::Separator();
 
     // Debug Texture Mode
-    ImGui::Checkbox("Debug Texture Mode", &m_infos.debug);
+    ImGui::Checkbox("Debug Mode", &m_infos.debug);
     if (m_infos.debug)
-        ImGui::Combo("Mode", (int*)&m_infos.mode, m_infos.modes, sizeof(m_infos.modes) / sizeof(char*));
+        ImGui::Combo("Mode", (int*)&m_infos.mode, m_infos.modes, ARRAY_SIZE(m_infos.modes));
     
+    ImGui::Separator();
+    ImGui::Text("FX");
+
     // Anti Aliasing 
     ImGui::Checkbox("Anti-Aliasing (FXAA)", &m_infos.aa_activated);
     if (m_infos.aa_activated)
@@ -206,10 +212,11 @@ void Renderer::update_imgui()
         ImGui::SliderFloat("Strength", m_bloom_pass->get_strength(), 0.5f, 2.f);
     }
 
-    if (ImGui::TreeNode("FX"))
-    {
-        ImGui::TreePop();
-    }
+    // Tone Mapping
+    ImGui::Text("Tone Mapping");
+    ImGui::SliderFloat("Exposure", m_hdr_pass->get_exposure(), 0.1f, 5.0f);
+    ImGui::Combo("Algorithm", m_hdr_pass->get_algorithm(), m_infos.tone_mapping, ARRAY_SIZE(m_infos.tone_mapping));
+    
     ImGui::ShowDemoWindow();
     ImGui::End();
 }
@@ -253,19 +260,14 @@ void Renderer::render(double xpos, double ypos)
 
     // FBO name to blit
     auto attachments = m_skybox_pass->get_attachments();
-    int fbo_name = m_skybox_pass->get_fbo()->get_name();
     if (m_infos.debug)
-    {
-        fbo_name = render_debug();
         attachments = m_debug_pass->get_attachments();
-    }
 
     // Anti-Aliasing
     if (m_infos.aa_activated)
     {
         m_aa_pass->set_frame_attachments(attachments);
         m_aa_pass->render(nullptr, nullptr);
-        fbo_name = m_aa_pass->get_fbo()->get_name();
         attachments = m_aa_pass->get_attachments();
     }
 
@@ -274,14 +276,15 @@ void Renderer::render(double xpos, double ypos)
     {
         m_bloom_pass->set_frame_attachments(attachments);
         m_bloom_pass->render(nullptr, nullptr);
-        fbo_name = m_bloom_pass->get_fbo()->get_name();
         attachments = m_bloom_pass->get_attachments();
     }
 
-    // FX 
+    // HDR
+    m_hdr_pass->set_frame_attachments(attachments);
+    m_hdr_pass->render(nullptr, nullptr);
 
     // Blit
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_name);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_hdr_pass->get_fbo()->get_name());
     glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
