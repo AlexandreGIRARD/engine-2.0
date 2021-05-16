@@ -79,7 +79,7 @@ void Deferred_Pass::set_gbuffer_attachments(const std::vector<shared_attachment>
     m_program->addUniformTexture2D(g_buffer_attachments[0]->m_name, 0, "position_tex"); // Position texture
     m_program->addUniformTexture2D(g_buffer_attachments[1]->m_name, 1, "base_color_tex"); // Base Color texture
     m_program->addUniformTexture2D(g_buffer_attachments[2]->m_name, 2, "orm_tex"); // Position texture
-    m_program->addUniformTexture2D(g_buffer_attachments[30]->m_name, 3, "emissive_tex"); // Position texture
+    m_program->addUniformTexture2D(g_buffer_attachments[3]->m_name, 3, "emissive_tex"); // Position texture
     m_program->addUniformTexture2D(g_buffer_attachments[4]->m_name, 4, "normal_tex");} // Position texture
 
 void Deferred_Pass::set_ssao_attachment(const std::vector<shared_attachment> ao_attachments)

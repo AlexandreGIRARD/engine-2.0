@@ -18,8 +18,9 @@ namespace pipeline
         void set_frame_attachments(const std::vector<shared_attachment> frame_attachments);
 
         shared_attachment m_attach_output;
-        shared_attachment m_attach_depth;
-        shared_attachment m_attach_blur;
+        shared_attachment m_attach_factor;
+        shared_attachment m_attach_blur_first;
+        shared_attachment m_attach_blur_second;
 
         float* get_diameter() { return &m_diameter; }
         float* get_focal_length() { return &m_focal_length; }
@@ -30,6 +31,8 @@ namespace pipeline
 
         shared_program m_depth_program;
         shared_program m_blur_program;
+
+        unsigned int m_frame_name; // Frame attachment id
 
         float m_diameter = 0.2;
         float m_focal_length = 0.1;

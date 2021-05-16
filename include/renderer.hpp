@@ -61,8 +61,9 @@ struct Renderer_Info
     const char* tone_mapping[2] = {"Basic", "ACCES Filmic"};
 
     // Activated features
-    bool aa_activated = false;
+    bool aa_activated    = false;
     bool bloom_activated = false;
+    bool dof_activated   = false;
 };
 
 class Renderer

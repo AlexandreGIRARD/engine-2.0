@@ -14,6 +14,10 @@ It's a deferred rendering engine based on the glTF file format.
 - Screen Space Ambient Occlusion
 - Fast Approximate Anti-Aliasing
 - Debug Mode
+- FX
+  - Bloom
+  - Depth of Field
+  - Multiple Tone Mapping
 
 ### Need to be transfered from the old Engine
 - Shadow Mapping (Both Directional and Point)
@@ -22,8 +26,6 @@ It's a deferred rendering engine based on the glTF file format.
 
 ### Coming Soon
 See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
-- Bloom
-- Depth of Field
 - Specular Glossiness Workflow
 - Post Fx effects
   - Grain

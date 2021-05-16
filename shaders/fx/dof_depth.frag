@@ -13,7 +13,14 @@ layout (location = 0) out float frag_output;
 
 void main()
 {
-    float z = - (view * texture(position_tex, frag_uv)).z;
+    vec4 pos = texture(position_tex, frag_uv);
+    // Background -> full blur
+    if (pos == vec4(0))
+    {
+        frag_output = 1.f;
+        return;
+    }
+    float z = - (view * pos).z;
     float factor = abs((z_focus - z) / z_range);
-    frag_output = factor;
+    frag_output = clamp(factor, 0.f, 1.f);
 }

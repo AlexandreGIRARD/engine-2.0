@@ -62,22 +62,20 @@ void Bloom_Pass::render(Camera* camera, Scene* scene)
         m_gaussian_program->addUniformInt(level, "mip_level");
 
         // Horizontal pass
-        m_gaussian_program->addUniformTexture2D(m_attach_brightness->m_name, 0, "brightness_tex");
+        m_gaussian_program->addUniformTexture2D(m_attach_brightness->m_name, 0, "to_blur_tex");
         m_gaussian_program->addUniformInt(1, "is_horizontal");
         render_screen_quad(std::vector{m_attach_bloom_first[level]});
 
         // Vertical pass
-        m_gaussian_program->addUniformTexture2D(m_attach_bloom_first[level]->m_name, 0, "brightness_tex");
+        m_gaussian_program->addUniformTexture2D(m_attach_bloom_first[level]->m_name, 0, "to_blur_tex");
         m_gaussian_program->addUniformInt(0, "is_horizontal");
         render_screen_quad(std::vector{m_attach_bloom_second[level]});
     }
+    glViewport(0, 0, m_width, m_height);
 
     // Third Step: Blending texture
     m_program->use();
-    glViewport(0, 0, m_width, m_height);
-
-    // Set texture input
-    m_program->addUniformTexture2D(m_frame_name, 0, "frame_tex");
+    m_program->addUniformTexture2D(m_frame_name, 0, "frame_tex"); // Frame texture
     for (int level = 0; level < BLUR_LEVELS; level++)
         m_program->addUniformTexture2D(m_attach_bloom_second[level]->m_name, level + 1, ("bloom_tex[" + std::to_string(level) + "]").c_str());
 

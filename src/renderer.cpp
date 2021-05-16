@@ -220,9 +220,12 @@ void Renderer::update_imgui()
     ImGui::Combo("Algorithm", m_hdr_pass->get_algorithm(), m_infos.tone_mapping, ARRAY_SIZE(m_infos.tone_mapping));
     
     // Depth of Field
-    ImGui::Text("Depth of Field");
-    ImGui::SliderFloat("Z Focus", m_dof_pass->get_zfocus(), 2.f, 50.f);
-    ImGui::SliderFloat("Z Range", m_dof_pass->get_zrange(), 0.1f, 20.f);
+     ImGui::Checkbox("Depth of Field", &m_infos.dof_activated);
+    if (m_infos.dof_activated)
+    {
+        ImGui::SliderFloat("Z Focus", m_dof_pass->get_zfocus(), 2.f, 50.f);
+        ImGui::SliderFloat("Z Range", m_dof_pass->get_zrange(), 0.1f, 20.f);
+    }
 
     ImGui::ShowDemoWindow();
     ImGui::End();
@@ -286,8 +289,14 @@ void Renderer::render(double xpos, double ypos)
         attachments = m_bloom_pass->get_attachments();
     }
 
-    m_dof_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
-    m_dof_pass->render(m_camera, nullptr);
+    // Depth of Field
+    if (m_infos.dof_activated)
+    {
+        m_dof_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
+        m_dof_pass->set_frame_attachments(attachments);
+        m_dof_pass->render(m_camera, nullptr);
+        attachments = m_dof_pass->get_attachments();
+    }
 
     // HDR
     m_hdr_pass->set_frame_attachments(attachments);
