@@ -27,6 +27,7 @@ namespace pipeline
     class Debug_Pass;
     class Bloom_Pass;
     class HDR_Pass;
+    class DOF_Pass;
 }
 
 using shared_scene  = std::shared_ptr<Scene>;
@@ -103,6 +104,7 @@ private:
     pipeline::Debug_Pass*    m_debug_pass;
     pipeline::Bloom_Pass*    m_bloom_pass;
     pipeline::HDR_Pass*      m_hdr_pass;
+    pipeline::DOF_Pass*      m_dof_pass;
 
     Renderer_Info m_infos;
 };

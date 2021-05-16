@@ -21,6 +21,8 @@ public:
     void addUniformVec3(const glm::vec3& vector, const char *name) const;
     void addUniformVec4(const glm::vec4& vector, const char *name) const;
     void addUniformTexture(const unsigned int unit, const char *name) const;
+    void addUniformTexture2D(const unsigned int texture, const unsigned int unit, const char *name) const;
+    void addUniformTextureCubeMap(const unsigned int texture, const unsigned int unit, const char *name) const;
     void addUniformFloat(const float val, const char* name) const;
     void addUniformDouble(const double val, const char* name) const;
     void addUniformUint(const unsigned int val, const char* name) const;

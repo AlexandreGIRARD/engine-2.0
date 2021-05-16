@@ -16,7 +16,7 @@ namespace pipeline
     protected:
         void set_screen_quad();
         void render_screen_quad();
-        void render_screen_quad(int size, unsigned int* buffers);
+        void render_screen_quad(std::vector<shared_attachment> attachments);
 
         unsigned int m_quad_vao;
         unsigned int m_quad_vbo;

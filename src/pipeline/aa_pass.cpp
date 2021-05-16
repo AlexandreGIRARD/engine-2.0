@@ -49,9 +49,5 @@ void AA_Pass::render(Camera* camera, Scene* scene)
 void AA_Pass::set_frame_attachments(const std::vector<shared_attachment> g_frame_attachments)
 {
     m_program->use();
-
-    // Position texture
-    m_program->addUniformTexture(0, "frame_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, g_frame_attachments[0]->m_name);
+    m_program->addUniformTexture2D(g_frame_attachments[0]->m_name, 0, "frame_tex"); // Frame texture
 }

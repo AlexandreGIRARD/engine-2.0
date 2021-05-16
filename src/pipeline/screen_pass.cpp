@@ -51,11 +51,20 @@ void Screen_Pass::render_screen_quad()
     m_fbo->unbind();
 }
 
-void Screen_Pass::render_screen_quad(int size, unsigned int* buffers)
+void Screen_Pass::render_screen_quad(std::vector<shared_attachment> attachments)
 {
     // Framebuffer Binding Points
     m_fbo->bind();
-    glDrawBuffers(size, buffers);
+
+    unsigned int* buffers = new unsigned int[attachments.size()];
+
+    for (int i = 0; i < attachments.size(); i++)
+    {
+        m_fbo->set_attachment(attachments[i], GL_COLOR_ATTACHMENT0 + i);
+        buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+    }
+
+    glDrawBuffers(attachments.size(), buffers);
     
     // Disable depth test
     glDisable(GL_DEPTH_TEST);

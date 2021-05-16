@@ -47,11 +47,8 @@ void Bloom_Pass::render(Camera* camera, Scene* scene)
     m_brightness_program->addUniformFloat(m_threshold, "threshold");
     m_brightness_program->addUniformFloat(m_strength, "strength");
 
-
     glViewport(0, 0, m_width, m_height);
-    m_fbo->bind();
-    m_fbo->set_attachment(m_attach_brightness, GL_COLOR_ATTACHMENT0);
-    render_screen_quad();
+    render_screen_quad(std::vector{m_attach_brightness});
     m_attach_brightness->generate_mipmap();
 
     // EROROR
@@ -65,42 +62,26 @@ void Bloom_Pass::render(Camera* camera, Scene* scene)
         m_gaussian_program->addUniformInt(level, "mip_level");
 
         // Horizontal pass
-        m_fbo->bind();
-        m_fbo->set_attachment(m_attach_bloom_first[level], GL_COLOR_ATTACHMENT0);
-        m_gaussian_program->addUniformTexture(0, "brightness_tex");
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_attach_brightness->m_name);
+        m_gaussian_program->addUniformTexture2D(m_attach_brightness->m_name, 0, "brightness_tex");
         m_gaussian_program->addUniformInt(1, "is_horizontal");
-        render_screen_quad();
+        render_screen_quad(std::vector{m_attach_bloom_first[level]});
 
         // Vertical pass
-        m_fbo->bind();
-        m_fbo->set_attachment(m_attach_bloom_second[level], GL_COLOR_ATTACHMENT0);
-        m_gaussian_program->addUniformTexture(0, "brightness_tex");
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_attach_bloom_first[level]->m_name);
+        m_gaussian_program->addUniformTexture2D(m_attach_bloom_first[level]->m_name, 0, "brightness_tex");
         m_gaussian_program->addUniformInt(0, "is_horizontal");
-        render_screen_quad();
+        render_screen_quad(std::vector{m_attach_bloom_second[level]});
     }
 
     // Third Step: Blending texture
     m_program->use();
     glViewport(0, 0, m_width, m_height);
+
     // Set texture input
-    m_program->addUniformTexture(0, "frame_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_frame_name);
-
+    m_program->addUniformTexture2D(m_frame_name, 0, "frame_tex");
     for (int level = 0; level < BLUR_LEVELS; level++)
-    {
-        m_program->addUniformTexture(level + 1, ("bloom_tex[" + std::to_string(level) + "]").c_str());
-        glActiveTexture(GL_TEXTURE1 + level);
-        glBindTexture(GL_TEXTURE_2D, m_attach_bloom_second[level]->m_name);
-    }
+        m_program->addUniformTexture2D(m_attach_bloom_second[level]->m_name, level + 1, ("bloom_tex[" + std::to_string(level) + "]").c_str());
 
-    m_fbo->bind();
-    m_fbo->set_attachment(m_attach_output, GL_COLOR_ATTACHMENT0);
-    render_screen_quad();
+    render_screen_quad(std::vector{m_attach_output});
     
 }
 
@@ -128,7 +109,5 @@ void Bloom_Pass::set_frame_attachments(const std::vector<shared_attachment> g_fr
     m_frame_name = g_frame_attachments[0]->m_name;
     m_brightness_program->use();
 
-    m_brightness_program->addUniformTexture(0, "frame_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, g_frame_attachments[0]->m_name);
+    m_brightness_program->addUniformTexture2D(g_frame_attachments[0]->m_name, 0, "frame_tex");
 }

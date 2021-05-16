@@ -20,6 +20,7 @@ Deferred_Pass::Deferred_Pass(unsigned int width, unsigned int height)
     // Init framebuffer
     m_fbo->bind();
     m_fbo->set_attachment(m_attach_output, GL_COLOR_ATTACHMENT0);
+    m_fbo->unbind();
 }
 
 Deferred_Pass::~Deferred_Pass()
@@ -75,64 +76,27 @@ void Deferred_Pass::set_lights(std::vector<shared_light> lights)
 void Deferred_Pass::set_gbuffer_attachments(const std::vector<shared_attachment> g_buffer_attachments)
 {
     m_program->use();
-
-    // Position texture
-    m_program->addUniformTexture(0, "position_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, g_buffer_attachments[0]->m_name);
-
-    // Base Color texture
-    m_program->addUniformTexture(1, "base_color_tex");
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, g_buffer_attachments[1]->m_name);
-
-    // Position texture
-    m_program->addUniformTexture(2, "orm_tex");
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, g_buffer_attachments[2]->m_name);
-
-    // Position texture
-    m_program->addUniformTexture(3, "emissive_tex");
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, g_buffer_attachments[3]->m_name);
-
-    // Position texture
-    m_program->addUniformTexture(4, "normal_tex");
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, g_buffer_attachments[4]->m_name);
-}
+    m_program->addUniformTexture2D(g_buffer_attachments[0]->m_name, 0, "position_tex"); // Position texture
+    m_program->addUniformTexture2D(g_buffer_attachments[1]->m_name, 1, "base_color_tex"); // Base Color texture
+    m_program->addUniformTexture2D(g_buffer_attachments[2]->m_name, 2, "orm_tex"); // Position texture
+    m_program->addUniformTexture2D(g_buffer_attachments[30]->m_name, 3, "emissive_tex"); // Position texture
+    m_program->addUniformTexture2D(g_buffer_attachments[4]->m_name, 4, "normal_tex");} // Position texture
 
 void Deferred_Pass::set_ssao_attachment(const std::vector<shared_attachment> ao_attachments)
 {
     m_program->use();
-
-    // SSAO texture
-    m_program->addUniformTexture(5, "ssao_tex");
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, ao_attachments[1]->m_name);
+    m_program->addUniformTexture2D(ao_attachments[1]->m_name, 5, "ssao_tex"); // AO texture
 }
 
 void Deferred_Pass::set_ibl_attachments(const std::vector<shared_attachment> ibl_attachments)
 {
     m_program->use();
-
-    // Irradiance Cubemap
-    m_program->addUniformTexture(6, "ibl_diffuse");
-    glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[1]->m_name);
-
-    // Specular Cubemap
-    m_program->addUniformTexture(7, "ibl_specular");
-    glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, ibl_attachments[2]->m_name);
+    m_program->addUniformTextureCubeMap(ibl_attachments[1]->m_name, 6, "ibl_diffuse"); // Irradiance Cubemap
+    m_program->addUniformTextureCubeMap(ibl_attachments[2]->m_name, 7, "ibl_specular"); // Specular Cubemap
 }
 
 void Deferred_Pass::set_brdf_lut_attachment(const std::vector<shared_attachment> brdf_lut_attachments)
 {
     m_program->use();
-
-    // BRDF Look Up Table
-    m_program->addUniformTexture(8, "brdf_lut");
-    glActiveTexture(GL_TEXTURE8);
-    glBindTexture(GL_TEXTURE_2D, brdf_lut_attachments[0]->m_name);
+    m_program->addUniformTexture2D(brdf_lut_attachments[0]->m_name, 8, "brdf_lut"); // BRDF Look Up Table
 }

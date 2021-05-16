@@ -19,10 +19,12 @@ namespace pipeline
         shared_attachment m_attach_output;
 
         float* get_exposure() { return &m_exposure; }
+        float* get_gamma() { return &m_gamma; }
         int* get_algorithm() { return &m_algorithm; }
 
     private:
         float m_exposure = 1.f;
+        float m_gamma = 2.2f;
         int m_algorithm;
     };
 }

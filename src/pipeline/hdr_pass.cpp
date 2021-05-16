@@ -30,6 +30,7 @@ void HDR_Pass::render(Camera* camera, Scene* scene)
 {
     m_program->use();
     m_program->addUniformFloat(m_exposure, "exposure");
+    m_program->addUniformFloat(m_gamma, "gamma");
     m_program->addUniformInt(m_algorithm, "algorithm");
 
     render_screen_quad();
@@ -46,12 +47,8 @@ void HDR_Pass::resize(unsigned int width, unsigned int height)
     m_attach_output->resize(width, height);
 }
 
-void HDR_Pass::set_frame_attachments(const std::vector<shared_attachment> g_frame_attachments)
+void HDR_Pass::set_frame_attachments(const std::vector<shared_attachment> frame_attachments)
 {
     m_program->use();
-
-    // Position texture
-    m_program->addUniformTexture(0, "frame_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, g_frame_attachments[0]->m_name);
+    m_program->addUniformTexture2D(frame_attachments[0]->m_name, 0, "frame_tex"); // Frame texture
 }

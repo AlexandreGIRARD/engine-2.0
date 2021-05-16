@@ -46,11 +46,7 @@ void Debug_Pass::resize(unsigned int width, unsigned int height)
 void Debug_Pass::set_attachment(const shared_attachment attachment, const int mode)
 {
     m_program->use();
-    
-    // Debug texture
-    m_program->addUniformTexture(0, "debug_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, attachment->m_name);
+    m_program->addUniformTexture2D(attachment->m_name, 0, "debug_tex"); // Debug texture
 
     m_program->addUniformInt(mode, "mode");
 }

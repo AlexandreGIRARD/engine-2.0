@@ -114,6 +114,7 @@ bool Renderer::init_pipeline()
     m_debug_pass    = new pipeline::Debug_Pass(m_width, m_height);
     m_bloom_pass    = new pipeline::Bloom_Pass(m_width, m_height);
     m_hdr_pass      = new pipeline::HDR_Pass(m_width, m_height);
+    m_dof_pass      = new pipeline::DOF_Pass(m_width, m_height);
     return true;
 }
 
@@ -175,8 +176,8 @@ void Renderer::update_imgui()
     // Camera settings
     ImGui::Text("Camera Settings:");
     ImGui::SliderFloat("Fov", m_camera->get_fov(), 30.f, 120.f);
-    ImGui::SliderFloat("Near Plane", m_camera->get_near(), 0.0001f, 0.1f);
-    ImGui::SliderFloat("Far Plane", m_camera->get_far(), 20.f, 10000.f);
+    ImGui::SliderFloat("Near Plane", m_camera->get_near(), 0.001f, 1.f);
+    ImGui::SliderFloat("Far Plane", m_camera->get_far(), 10.f, 100.f);
     ImGui::Separator();
 
     // Environment settings
@@ -208,15 +209,21 @@ void Renderer::update_imgui()
     ImGui::Checkbox("Bloom", &m_infos.bloom_activated);
     if (m_infos.bloom_activated)
     {
-        ImGui::SliderFloat("Threshold", m_bloom_pass->get_threshold(), 0.f, 1.f);
+        ImGui::SliderFloat("Threshold", m_bloom_pass->get_threshold(), 0.f, 2.f);
         ImGui::SliderFloat("Strength", m_bloom_pass->get_strength(), 0.5f, 2.f);
     }
 
     // Tone Mapping
     ImGui::Text("Tone Mapping");
+    ImGui::SliderFloat("Gamma", m_hdr_pass->get_gamma(), 0.1f, 5.f);
     ImGui::SliderFloat("Exposure", m_hdr_pass->get_exposure(), 0.1f, 5.0f);
     ImGui::Combo("Algorithm", m_hdr_pass->get_algorithm(), m_infos.tone_mapping, ARRAY_SIZE(m_infos.tone_mapping));
     
+    // Depth of Field
+    ImGui::Text("Depth of Field");
+    ImGui::SliderFloat("Z Focus", m_dof_pass->get_zfocus(), 2.f, 50.f);
+    ImGui::SliderFloat("Z Range", m_dof_pass->get_zrange(), 0.1f, 20.f);
+
     ImGui::ShowDemoWindow();
     ImGui::End();
 }
@@ -279,6 +286,9 @@ void Renderer::render(double xpos, double ypos)
         attachments = m_bloom_pass->get_attachments();
     }
 
+    m_dof_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
+    m_dof_pass->render(m_camera, nullptr);
+
     // HDR
     m_hdr_pass->set_frame_attachments(attachments);
     m_hdr_pass->render(nullptr, nullptr);
@@ -299,6 +309,8 @@ void Renderer::resize(unsigned int width, unsigned int height)
     m_aa_pass->resize(width, height);
     m_debug_pass->resize(width, height);
     m_bloom_pass->resize(width, height);
+    m_hdr_pass->resize(width, height);
+    m_dof_pass->resize(width, height);
 }
 
 int Renderer::render_debug()

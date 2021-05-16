@@ -98,6 +98,20 @@ void Program::addUniformTexture(const unsigned int unit, const char *name) const
     glUniform1i(glGetUniformLocation(m_id_program, name), unit);
 }
 
+void Program::addUniformTexture2D(const unsigned int texture, const unsigned int unit, const char *name) const
+{
+    addUniformTexture(unit, name);
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_2D, texture);
+}
+
+void Program::addUniformTextureCubeMap(const unsigned int texture, const unsigned int unit, const char *name) const
+{
+    addUniformTexture(unit, name);
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+}
+
 void Program::addUniformVec2(const glm::vec2& vector, const char *name) const
 {
     glUniform2f(glGetUniformLocation(m_id_program, name), vector.x, vector.y);

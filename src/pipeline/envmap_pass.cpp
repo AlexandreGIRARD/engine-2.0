@@ -180,11 +180,7 @@ void EnvMap_Pass::render_skybox()
 void EnvMap_Pass::render_irradiance()
 {
     m_irradiance_program->use();
-
-    // Skybox Cubemap binding
-    m_irradiance_program->addUniformTexture(0, "skybox");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
+    m_irradiance_program->addUniformTextureCubeMap(m_attach_skybox_map->m_name, 0, "skybox"); // Skybox Cubemap binding
 
     glViewport(0, 0, m_attach_irradiance_cubemap->m_width, m_attach_irradiance_cubemap->m_height);
     render_cubemap(m_irradiance_program, m_attach_irradiance_cubemap);
@@ -194,13 +190,9 @@ void EnvMap_Pass::render_irradiance()
 void EnvMap_Pass::render_specular()
 {
     m_specular_program->use();
-
-    // Skybox Cubemap binding
+    m_specular_program->addUniformTextureCubeMap(m_attach_skybox_map->m_name, 0, "skybox"); //  Skybox Cubemap binding
     m_attach_skybox_map->generate_mipmap();
-    m_specular_program->addUniformTexture(0, "skybox");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_attach_skybox_map->m_name);
-
+    
     int max_level = 5;
     for (int level = 0; level < max_level; level++)
     {

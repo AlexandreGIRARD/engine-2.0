@@ -12,7 +12,7 @@ Skybox_Pass::Skybox_Pass(unsigned int width, unsigned int height)
     m_program->add_shader("envmap/skybox.frag", GL_FRAGMENT_SHADER);
     m_program->link();
 
-    m_attach_color = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+    m_attach_color = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_RGB16F, GL_RGB, GL_FLOAT);
     m_attach_depth = std::make_shared<Attachment>(GL_TEXTURE_2D, m_width, m_height, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_FLOAT);
     
     set_cube();
@@ -123,10 +123,7 @@ void Skybox_Pass::blit_buffers(const shared_fbo color_fbo, const shared_fbo dept
 void Skybox_Pass::set_skybox_attachments(const std::vector<shared_attachment> attachments)
 {
     m_program->use();
-    // Skybox Cubemap binding
-    m_program->addUniformTexture(0, "skybox");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, attachments[0]->m_name);
+    m_program->addUniformTextureCubeMap(attachments[0]->m_name, 0, "skybox"); // Skybox Cubemap binding
 }
 
 const std::vector<shared_attachment> Skybox_Pass::get_attachments()

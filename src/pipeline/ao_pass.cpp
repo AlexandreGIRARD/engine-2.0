@@ -63,36 +63,20 @@ void AO_Pass::render(Camera* camera, Scene* scene)
     m_program->addUniformFloat(m_power, "power");
     m_noise_tex->bind(m_program, 3, "noise_tex");
 
-    m_fbo->bind();
-    m_fbo->set_attachment(m_attach_ao, GL_COLOR_ATTACHMENT0);
-
-    render_screen_quad();
+    render_screen_quad(std::vector{m_attach_ao});
 
     // Second pass: Blur Pass
     m_blur_program->use();
-    // To blur texture
-    m_program->addUniformTexture(0, "ao_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_attach_ao->m_name);
+    m_program->addUniformTexture2D(m_attach_ao->m_name, 0, "ao_tex"); // To blur texture
 
-    m_fbo->bind();
-    m_fbo->set_attachment(m_attach_blured, GL_COLOR_ATTACHMENT0);
-    render_screen_quad();
+    render_screen_quad(std::vector{m_attach_blured});
 }
 
 void AO_Pass::set_gbuffer_attachments(const std::vector<shared_attachment> gbuffer_attachments)
 {
     m_program->use();
-
-    // Position texture
-    m_program->addUniformTexture(0, "position_tex");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, gbuffer_attachments[0]->m_name);
-
-    // Normal texture
-    m_program->addUniformTexture(1, "normal_tex");
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, gbuffer_attachments[4]->m_name);
+    m_program->addUniformTexture2D(gbuffer_attachments[0]->m_name, 0, "position_tex"); // Position texture
+    m_program->addUniformTexture2D(gbuffer_attachments[4]->m_name, 1, "normal_tex"); // Normal texture
 }
 
 void AO_Pass::init_samples()

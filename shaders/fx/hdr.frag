@@ -5,6 +5,7 @@
 
 layout (binding = 0) uniform sampler2D frame_tex;
 uniform float exposure;
+uniform float gamma;
 uniform int algorithm;
 
 in vec2 frag_uv;
@@ -35,6 +36,6 @@ void main()
     color = vec3(1.0) - exp(-color * exposure);
 
     // Gamma correction
-    color = pow(color, vec3(1.0 / 2.2)); 
+    color = pow(color, vec3(1.0 / gamma)); 
     frag_output = vec4(color, 1.0);
 }

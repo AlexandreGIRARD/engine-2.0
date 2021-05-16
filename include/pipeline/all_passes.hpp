@@ -10,3 +10,4 @@
 #include "debug_pass.hpp"
 #include "bloom_pass.hpp"
 #include "hdr_pass.hpp"
+#include "dof_pass.hpp"
