@@ -8,6 +8,7 @@
 #define G_EMISSIVE        5
 #define G_AO              6
 #define AMBIENT_OCCLUSION 7
+#define DOF               8
 
 layout (binding = 0) uniform sampler2D debug_tex;
 
@@ -27,6 +28,6 @@ void main()
         debug_output = vec4(info.g);
     else if (mode == G_AO)
         debug_output = vec4(info.r);
-    else if (mode == AMBIENT_OCCLUSION)
+    else if (mode == AMBIENT_OCCLUSION || mode == DOF)
         debug_output = vec4(info.r);
 }

@@ -1,7 +1,7 @@
 #version 450 core
 
 layout (binding = 0) uniform sampler2D position_tex;
-uniform float diameter;
+uniform float aperture;
 uniform float focal_length;
 uniform float z_focus;
 uniform float z_range;
@@ -21,6 +21,7 @@ void main()
         return;
     }
     float z = - (view * pos).z;
-    float factor = abs((z_focus - z) / z_range);
+    // float factor = abs((z_focus - z) / z_range); // Simplified equation
+    float factor = abs((aperture * focal_length * (z_focus - z)) / (z_focus * (z - focal_length))); // More correct Circle of Confusion equation
     frag_output = clamp(factor, 0.f, 1.f);
 }

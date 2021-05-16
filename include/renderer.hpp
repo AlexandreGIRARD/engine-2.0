@@ -44,6 +44,7 @@ enum Debug_Mode
     G_EMISSIVE,
     G_AO,
     AMBIENT_OCCLUSION,
+    DOF,
 };
 
 struct Renderer_Info
@@ -55,7 +56,7 @@ struct Renderer_Info
     // Debug Texture mode Infos
     bool debug = false;
     Debug_Mode mode = Debug_Mode::G_POSITION; 
-    const char* modes[8] = {"Position", "Base Color", "Normal", "Metallic", "Roughness", "Emissive", "Ambient-Occlusion", "SSAO"};
+    const char* modes[9] = {"Position", "Base Color", "Normal", "Metallic", "Roughness", "Emissive", "Ambient-Occlusion", "SSAO", "DoF Zone"};
 
     // Tone Mapping
     const char* tone_mapping[2] = {"Basic", "ACCES Filmic"};
@@ -82,6 +83,7 @@ private:
     void render(double xpos, double ypos);
     int render_debug();
     void resize(unsigned int width, unsigned int height);
+    void blit_fbo(const unsigned int fbo_name);
 
     Scene*  m_scene;
     Camera* m_camera;

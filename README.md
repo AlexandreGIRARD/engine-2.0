@@ -32,7 +32,7 @@ See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
   - Chromatic Aberration
   - Lens-Flare  
 - Other Anti-Aliasing Algorithms
-- Other Ambien Occlusion Algorithms
+- Other Ambient Occlusion Algorithms
 
 
 ## Libraries

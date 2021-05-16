@@ -213,19 +213,21 @@ void Renderer::update_imgui()
         ImGui::SliderFloat("Strength", m_bloom_pass->get_strength(), 0.5f, 2.f);
     }
 
+    // Depth of Field
+    ImGui::Checkbox("Depth of Field", &m_infos.dof_activated);
+    if (m_infos.dof_activated)
+    {
+        ImGui::SliderFloat("Lens Diameter", m_dof_pass->get_diameter(), 0.1f, 5.f);
+        ImGui::SliderFloat("Lens Focal Length", m_dof_pass->get_focal_length(), 0.01f, 5.f);
+        ImGui::SliderFloat("Z Focus", m_dof_pass->get_zfocus(), 2.f, 50.f);
+    }
+
     // Tone Mapping
     ImGui::Text("Tone Mapping");
     ImGui::SliderFloat("Gamma", m_hdr_pass->get_gamma(), 0.1f, 5.f);
     ImGui::SliderFloat("Exposure", m_hdr_pass->get_exposure(), 0.1f, 5.0f);
     ImGui::Combo("Algorithm", m_hdr_pass->get_algorithm(), m_infos.tone_mapping, ARRAY_SIZE(m_infos.tone_mapping));
-    
-    // Depth of Field
-     ImGui::Checkbox("Depth of Field", &m_infos.dof_activated);
-    if (m_infos.dof_activated)
-    {
-        ImGui::SliderFloat("Z Focus", m_dof_pass->get_zfocus(), 2.f, 50.f);
-        ImGui::SliderFloat("Z Range", m_dof_pass->get_zrange(), 0.1f, 20.f);
-    }
+
 
     ImGui::ShowDemoWindow();
     ImGui::End();
@@ -268,10 +270,8 @@ void Renderer::render(double xpos, double ypos)
     m_skybox_pass->blit_buffers(m_deferred_pass->get_fbo(), m_gbuffer_pass->get_fbo());
     m_skybox_pass->render(m_camera, m_scene);
 
-    // FBO name to blit
+    // Attachment used as frame input for optionnal passes
     auto attachments = m_skybox_pass->get_attachments();
-    if (m_infos.debug)
-        attachments = m_debug_pass->get_attachments();
 
     // Anti-Aliasing
     if (m_infos.aa_activated)
@@ -298,14 +298,19 @@ void Renderer::render(double xpos, double ypos)
         attachments = m_dof_pass->get_attachments();
     }
 
-    // HDR
-    m_hdr_pass->set_frame_attachments(attachments);
-    m_hdr_pass->render(nullptr, nullptr);
-
-    // Blit
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_hdr_pass->get_fbo()->get_name());
-    glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    unsigned int fbo_name;
+    if (m_infos.debug)
+    {
+        fbo_name = render_debug();
+    }
+    else
+    {
+        // HDR
+        m_hdr_pass->set_frame_attachments(attachments);
+        m_hdr_pass->render(nullptr, nullptr);
+        fbo_name = m_hdr_pass->get_fbo()->get_name();
+    }
+    blit_fbo(fbo_name);
 }
 
 void Renderer::resize(unsigned int width, unsigned int height)
@@ -326,7 +331,7 @@ int Renderer::render_debug()
 {
     shared_attachment attach;
 
-    if (m_infos.mode != Debug_Mode::AMBIENT_OCCLUSION)
+    if (m_infos.mode < Debug_Mode::AMBIENT_OCCLUSION)
     {
         auto attachments = m_gbuffer_pass->get_attachments();
         switch (m_infos.mode)
@@ -348,13 +353,25 @@ int Renderer::render_debug()
             break;
         }
     }
-    else
+    else if (m_infos.mode == Debug_Mode::AMBIENT_OCCLUSION)
     {
         attach = m_ao_pass->get_attachments()[1]; // We take second one, blur
+    }
+    else if (m_infos.mode == Debug_Mode::DOF)
+    {
+        attach = m_dof_pass->get_attachments()[1];
     }
 
     m_debug_pass->set_attachment(attach, static_cast<int>(m_infos.mode));
     m_debug_pass->render(nullptr, nullptr);
 
     return m_debug_pass->get_fbo()->get_name();
+}
+
+void Renderer::blit_fbo(const unsigned int fbo_name)
+{
+    // Blit
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_name);
+    glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
