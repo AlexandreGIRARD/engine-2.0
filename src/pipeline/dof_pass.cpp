@@ -46,7 +46,6 @@ void DOF_Pass::render(Camera* camera, Scene* scene)
     m_depth_program->addUniformFloat(m_focal_length / m_diameter, "aperture");
     m_depth_program->addUniformFloat(m_focal_length, "focal_length");
     m_depth_program->addUniformFloat(m_zfocus, "z_focus");
-    m_depth_program->addUniformFloat(m_zrange, "z_range");
     m_depth_program->addUniformMat4(camera->look_at(), "view");
 
     render_screen_quad(std::vector{m_attach_factor});

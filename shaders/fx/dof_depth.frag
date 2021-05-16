@@ -21,7 +21,6 @@ void main()
         return;
     }
     float z = - (view * pos).z;
-    // float factor = abs((z_focus - z) / z_range); // Simplified equation
     float factor = abs((aperture * focal_length * (z_focus - z)) / (z_focus * (z - focal_length))); // More correct Circle of Confusion equation
     frag_output = clamp(factor, 0.f, 1.f);
 }

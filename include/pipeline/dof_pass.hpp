@@ -25,7 +25,6 @@ namespace pipeline
         float* get_diameter() { return &m_diameter; }
         float* get_focal_length() { return &m_focal_length; }
         float* get_zfocus() { return &m_zfocus; }
-        float* get_zrange() { return &m_zrange; }
 
     private:
 
@@ -34,9 +33,8 @@ namespace pipeline
 
         unsigned int m_frame_name; // Frame attachment id
 
-        float m_diameter = 0.2;
-        float m_focal_length = 0.1;
-        float m_zfocus = 2.f;
-        float m_zrange = 0.5f;
+        float m_diameter = 0.3;
+        float m_focal_length = 1.f;
+        float m_zfocus = 5.f;
     };
 }
