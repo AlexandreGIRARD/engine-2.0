@@ -25,7 +25,7 @@ uniform mat4 normal_matrix;
 
 void main()
 {
-    vs_out.normal = vec3(normal_matrix * vec4(normal, 1.0));
+    vs_out.normal = normalize(vec3(normal_matrix * vec4(normal, 1.0)));
     vs_out.pos = model * vec4(pos, 1.0);
     vs_out.tex_coords[0] = texcoord_0;
     vs_out.tex_coords[1] = texcoord_1;

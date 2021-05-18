@@ -133,15 +133,34 @@ vec3 get_ibl_contribution(float roughness, vec3 base_color, vec3 F, float NdotV,
 void main()
 {		
     vec3 base_color = pow(texture(base_color_tex, frag_uv).rgb, vec3(2.2));
-    float metallic  = texture(orm_tex, frag_uv).b;
-    float roughness = texture(orm_tex, frag_uv).g;
-    float ao        = texture(orm_tex, frag_uv).r * texture(ssao_tex, frag_uv).r;
+    float ao        = texture(ssao_tex, frag_uv).r;
     vec3 emissive   = pow(texture(emissive_tex, frag_uv).rgb, vec3(2.2));
     vec3 world_pos  = texture(position_tex, frag_uv).xyz;
     vec3 V          = normalize(cam_pos - world_pos);
     vec3 N          = texture(normal_tex, frag_uv).xyz;
-    vec3 F0         = mix(vec3(0.04), base_color, metallic);
     float NdotV     = clamp(dot(N, V), 0.0, 1.0);
+
+    vec3 C;
+    vec3 F0;
+    float roughness;
+
+    // Exectue as MetallicRoughness or SpecularGlossiness Workflow
+    int is_metallica_roughness = int(texture(emissive_tex, frag_uv).a);
+    if (is_metallica_roughness == 1)
+    {
+        C = base_color;
+        float metallic  = texture(orm_tex, frag_uv).b;
+        F0 = mix(vec3(0.04), base_color, metallic);
+        roughness = texture(orm_tex, frag_uv).g;
+    }
+    else
+    {
+        vec4 spec_gloss = texture(orm_tex, frag_uv);
+        C = base_color * (1 - max(spec_gloss.r, max(spec_gloss.g, spec_gloss.b)));
+        F0 = spec_gloss.rgb;
+        roughness = 1 - spec_gloss.a;
+    }
+
 
 
     // reflectance equation
@@ -166,7 +185,7 @@ void main()
         float G = Geometry_Smith_GGX(NdotV, NdotL, roughness);      
         vec3  F = Fresnel_Schlick(F0, VdotH);
 
-        vec3 diffuse_contrib  = (vec3(1.0) - F) * Lambertian_Diffuse(base_color);
+        vec3 diffuse_contrib  = (vec3(1.0) - F) * Lambertian_Diffuse(C);
         vec3 specular_contrib = (D * F * G) / (4.0 * NdotV * NdotL + 0.001);
 
         // add to outgoing radiance Lo
@@ -175,7 +194,7 @@ void main()
     
     vec3 R = normalize(-reflect(V, N)); // Relection vector
     vec3 F = Fresnel_Schlick_Roughness(NdotV, F0, roughness);
-    color += get_ibl_contribution(roughness, base_color, F, NdotV, N, R) * ibl_factor;
+    color += get_ibl_contribution(roughness, C, F, NdotV, N, R) * ibl_factor;
 
     color = mix(color, color * ao, 1.0);
 	color += emissive;

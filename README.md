@@ -10,6 +10,7 @@ It's a deferred rendering engine based on the glTF file format.
 - Physically Based Rendering
   - Metallic Roughness Workflow
   - IBL
+  - Specular Glossiness Workflow
 - Skybox
 - Screen Space Ambient Occlusion
 - Fast Approximate Anti-Aliasing
@@ -26,7 +27,6 @@ It's a deferred rendering engine based on the glTF file format.
 
 ### Coming Soon
 See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
-- Specular Glossiness Workflow
 - Post Fx effects
   - Grain
   - Chromatic Aberration

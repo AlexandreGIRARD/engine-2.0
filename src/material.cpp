@@ -9,42 +9,81 @@
 Material::Material(const tinygltf::Material& material, const tinygltf::Model& model)
 {
     // Set pbr val
-    auto pbr_params = material.pbrMetallicRoughness;
+    auto it = material.extensions.find("KHR_materials_pbrSpecularGlossiness");
+    if (it == material.extensions.end())
+        parse_metallic_roughness(material.pbrMetallicRoughness, model);
+    else
+        parse_specular_glossiness(it->second, model);
+
+    m_emissive_factor   = glm::vec3{material.emissiveFactor[0], material.emissiveFactor[1], material.emissiveFactor[2]};
+
+    if (material.normalTexture.index != -1) {
+        m_normal          = new Texture(model.textures[material.normalTexture.index], material.normalTexture.texCoord, model);
+        m_normal_texcoord = material.normalTexture.texCoord;
+        m_normal_scale    = material.normalTexture.scale;
+    }
+    if (material.emissiveTexture.index != -1) {
+        m_emissive          = new Texture(model.textures[material.emissiveTexture.index], material.emissiveTexture.texCoord, model);
+        m_emissive_texcoord = material.emissiveTexture.texCoord;
+    }
+    if (material.occlusionTexture.index != -1) {
+        m_occlusion          = new Texture(model.textures[material.occlusionTexture.index], material.occlusionTexture.texCoord, model);
+        m_occlusion_texcoord = material.occlusionTexture.texCoord;
+        m_occlusion_strength = material.occlusionTexture.strength;
+    }
+
+}
+
+void Material::parse_metallic_roughness(const tinygltf::PbrMetallicRoughness& pbr_params, const tinygltf::Model& model)
+{
+    std::cout << "Metallic-Roughness Model" << std::endl;
+    m_is_metallic_roughness = true;
 
     m_base_color_factor = glm::vec4{pbr_params.baseColorFactor[0], pbr_params.baseColorFactor[1], pbr_params.baseColorFactor[2], pbr_params.baseColorFactor[3]};
-    m_emissive_factor   = glm::vec3{material.emissiveFactor[0], material.emissiveFactor[1], material.emissiveFactor[2]};
     m_metallic_factor   = static_cast<float>(pbr_params.metallicFactor);
     m_roughness_factor  = static_cast<float>(pbr_params.roughnessFactor);
 
     if (pbr_params.baseColorTexture.index != -1) {
         m_base_color          = new Texture(model.textures[pbr_params.baseColorTexture.index], pbr_params.baseColorTexture.texCoord, model);
         m_base_color_texcoord = pbr_params.baseColorTexture.texCoord;
-        m_has_base_color_tex  = true;
     }
     if (pbr_params.metallicRoughnessTexture.index != -1) {
         m_metallic_roughness          = new Texture(model.textures[pbr_params.metallicRoughnessTexture.index], pbr_params.metallicRoughnessTexture.texCoord, model);
         m_metallic_roughness_texcoord = pbr_params.metallicRoughnessTexture.texCoord;
-        m_has_metallic_roughness_tex  = true;
     }
-    if (material.normalTexture.index != -1) {
-        m_normal          = new Texture(model.textures[material.normalTexture.index], material.normalTexture.texCoord, model);
-        m_normal_texcoord = material.normalTexture.texCoord;
-        m_normal_scale    = material.normalTexture.scale;
-        m_has_normal_tex  = true;
+}
+
+void Material::parse_specular_glossiness(const tinygltf::Value& pbr_params, const tinygltf::Model& model)
+{
+    std::cout << "Specular-Glossiness Model" << std::endl;
+    m_is_metallic_roughness = false;
+
+    // Diffuse as Albedo
+    if (pbr_params.Has("diffuseTexture")) {
+        int index = pbr_params.Get("diffuseTexture").Get("index").GetNumberAsInt();
+        m_base_color          = new Texture(model.textures[index], 0, model);
+        m_base_color_texcoord = 0;
     }
-    if (material.emissiveTexture.index != -1) {
-        m_emissive          = new Texture(model.textures[material.emissiveTexture.index], material.emissiveTexture.texCoord, model);
-        m_emissive_texcoord = material.emissiveTexture.texCoord;
-        m_has_emissive_tex  = true;
-    }
-    if (material.occlusionTexture.index != -1) {
-        m_occlusion          = new Texture(model.textures[material.occlusionTexture.index], material.occlusionTexture.texCoord, model);
-        m_occlusion_texcoord = material.occlusionTexture.texCoord;
-        m_occlusion_strength = material.occlusionTexture.strength;
-        m_has_occlusion_tex  = true;
+    if (pbr_params.Has("diffuseFactor")) {
+        auto factor = pbr_params.Get("diffuseFactor");
+        m_base_color_factor = glm::vec4{factor.Get(0).GetNumberAsDouble(), factor.Get(1).GetNumberAsDouble(), factor.Get(2).GetNumberAsDouble(), factor.Get(3).GetNumberAsDouble()};
     }
 
+    // Specular Glossiness
+    if (pbr_params.Has("specularGlossinessTexture")) {
+        int index = pbr_params.Get("specularGlossinessTexture").Get("index").GetNumberAsInt();
+        m_specular_glossiness          = new Texture(model.textures[index], 0, model);
+        m_specular_glossiness_texcoord = 0;
+    }
+    if (pbr_params.Has("specularFactor")) {
+        auto factor = pbr_params.Get("specular");
+        m_specular_factor = glm::vec3{factor.Get(0).GetNumberAsDouble(), factor.Get(1).GetNumberAsDouble(), factor.Get(2).GetNumberAsDouble()};
+    }
+    if (pbr_params.Has("glossinessFactor")) {
+        m_glossiness_factor = pbr_params.Get("glossinessFactor").GetNumberAsDouble();
+    }
 }
+
 
 Material::~Material()
 {
@@ -53,6 +92,7 @@ Material::~Material()
     delete m_normal;
     delete m_emissive;
     delete m_occlusion;
+    delete m_specular_glossiness;
 }
 
 void Material::bind(const shared_program program)
@@ -67,13 +107,17 @@ void Material::bind(const shared_program program)
     program->addUniformFloat(m_metallic_factor, "metallic_factor");
     program->addUniformFloat(m_roughness_factor, "roughness_factor");
     program->addUniformFloat(m_occlusion_factor, "occlusion_factor");
+    program->addUniformVec3(m_specular_factor, "specular_factor");
+    program->addUniformFloat(m_glossiness_factor, "glossiness_factor");
 
     // Bind textures information
-    program->addUniformBool(m_has_base_color_tex, "has_base_color_texture");
-    program->addUniformBool(m_has_metallic_roughness_tex, "has_metallic_roughness_texture");
-    program->addUniformBool(m_has_normal_tex, "has_normal_texture");
-    program->addUniformBool(m_has_emissive_tex, "has_emissive_texture");
-    program->addUniformBool(m_has_occlusion_tex, "has_occlusion_texture");
+    program->addUniformBool(m_is_metallic_roughness, "is_metallic_roughness");
+    program->addUniformBool(m_base_color != nullptr, "has_base_color_texture");
+    program->addUniformBool(m_metallic_roughness != nullptr, "has_metallic_roughness_texture");
+    program->addUniformBool(m_normal != nullptr, "has_normal_texture");
+    program->addUniformBool(m_emissive != nullptr, "has_emissive_texture");
+    program->addUniformBool(m_occlusion != nullptr, "has_occlusion_texture");
+    program->addUniformBool(m_specular_glossiness != nullptr, "has_specular_glossiness_texture");
 
     // Bind textures
     if (m_base_color)
@@ -102,5 +146,10 @@ void Material::bind(const shared_program program)
         m_occlusion->bind(program, 4 ,"occlusion_sampler");
         program->addUniformInt(m_occlusion_texcoord, "occlusion_texcoord");
         program->addUniformFloat(m_occlusion_strength, "occlusion_strength");
+    }
+    if (m_specular_glossiness)
+    {
+        m_specular_glossiness->bind(program, 5, "specular_glossiness_sampler");
+        program->addUniformInt(m_specular_glossiness_texcoord, "specular_glossiness_texcoord");
     }
 }
