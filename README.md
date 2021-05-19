@@ -44,4 +44,6 @@ See [issues](https://github.com/AlexandreGIRARD/engine-2.0/issues)
 
 
 ## Results
-[Youtube Video](https://www.youtube.com/watch?v=GBET792NKIw)
+[Youtube Video](https://youtu.be/2U2K_oS7nt4)
+
+![gif](resources/readme.gif)
