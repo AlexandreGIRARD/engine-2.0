@@ -3,7 +3,7 @@
 const int kernel_size = 64;
 
 layout (binding = 0) uniform sampler2D position_tex;
-layout (binding = 1) uniform sampler2D normal_tex;
+// layout (binding = 1) uniform sampler2D normal_tex;
 layout (binding = 1) uniform sampler2D noise_tex;
 
 uniform mat4 projection;
@@ -27,7 +27,8 @@ void main()
 {
     // To view space gbuffer informations
     vec3 origin = to_view_space(texture(position_tex, frag_uv).xyz);
-    vec3 normal = normalize(to_view_space(texture(normal_tex, frag_uv).xyz));
+    vec3 normal = normalize(cross(dFdx(origin), dFdy(origin)));
+    normal = normalize(to_view_space(normal));
     vec3 rvec   = texture(noise_tex, frag_uv * noise_scale).xyz;
 
     // Gram-Schimdt
