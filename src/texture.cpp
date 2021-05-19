@@ -68,7 +68,6 @@ Texture::Texture(const std::string& file_path, bool as_float)
     }
 
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, type, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(data);
 }

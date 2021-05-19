@@ -31,9 +31,9 @@ EnvMap_Pass::EnvMap_Pass(unsigned int width, unsigned int height)
     m_specular_program->link();
 
     // Init attachments
-    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB16F, GL_RGB, GL_FLOAT);
-    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 64,   64, GL_RGB16F, GL_RGB, GL_FLOAT);
-    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 256, 256, GL_RGB16F, GL_RGB, GL_FLOAT);
+    m_attach_skybox_map         = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 1024, 1024, GL_RGB32F, GL_RGB, GL_FLOAT);
+    m_attach_irradiance_cubemap = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 128, 128, GL_RGB32F, GL_RGB, GL_FLOAT);
+    m_attach_specular_cubemap   = std::make_shared<Attachment>(GL_TEXTURE_CUBE_MAP, 512, 512, GL_RGB32F, GL_RGB, GL_FLOAT);
     m_attach_specular_cubemap->generate_mipmap();
 
     // Init Cube

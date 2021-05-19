@@ -40,7 +40,7 @@ G_Buffer_Pass::~G_Buffer_Pass()
 
  const std::vector<shared_attachment> G_Buffer_Pass::get_attachments()
  {
-     return std::vector<shared_attachment>{m_attach_position, m_attach_base_color, m_attach_orm, m_attach_emissive, m_attach_normal};
+     return std::vector<shared_attachment>{m_attach_position, m_attach_base_color, m_attach_orm, m_attach_emissive, m_attach_normal, m_attach_depth};
  }
 
  void G_Buffer_Pass::resize(unsigned int width, unsigned int height)

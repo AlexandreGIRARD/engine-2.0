@@ -266,37 +266,37 @@ void Renderer::render(double xpos, double ypos)
     m_deferred_pass->set_ssao_attachment(m_ao_pass->get_attachments());
     m_deferred_pass->render(m_camera, m_scene);
 
-    // Render Skybox pass
-    m_skybox_pass->blit_buffers(m_deferred_pass->get_fbo(), m_gbuffer_pass->get_fbo());
-    m_skybox_pass->render(m_camera, m_scene);
-
-    // Attachment used as frame input for optionnal passes
-    auto attachments = m_skybox_pass->get_attachments();
+    pipeline::Render_Pass* last_pass = m_deferred_pass;
 
     // Anti-Aliasing
     if (m_infos.aa_activated)
     {
-        m_aa_pass->set_frame_attachments(attachments);
+        m_aa_pass->set_frame_attachments(last_pass->get_attachments());
         m_aa_pass->render(nullptr, nullptr);
-        attachments = m_aa_pass->get_attachments();
+        last_pass = m_aa_pass;
     }
 
     // Bloom
     if (m_infos.bloom_activated)
     {
-        m_bloom_pass->set_frame_attachments(attachments);
+        m_bloom_pass->set_frame_attachments(last_pass->get_attachments());
         m_bloom_pass->render(nullptr, nullptr);
-        attachments = m_bloom_pass->get_attachments();
+        last_pass = m_bloom_pass;
     }
 
     // Depth of Field
     if (m_infos.dof_activated)
     {
         m_dof_pass->set_gbuffer_attachments(m_gbuffer_pass->get_attachments());
-        m_dof_pass->set_frame_attachments(attachments);
+        m_dof_pass->set_frame_attachments(last_pass->get_attachments());
         m_dof_pass->render(m_camera, nullptr);
-        attachments = m_dof_pass->get_attachments();
+        last_pass = m_dof_pass;
     }
+
+    // Render Skybox pass
+    m_skybox_pass->blit_buffers(last_pass->get_fbo(), m_gbuffer_pass->get_fbo()); // Color and Depth FBO
+    m_skybox_pass->render(m_camera, m_scene);
+    last_pass = m_skybox_pass;
 
     unsigned int fbo_name;
     if (m_infos.debug)
@@ -306,7 +306,7 @@ void Renderer::render(double xpos, double ypos)
     else
     {
         // HDR
-        m_hdr_pass->set_frame_attachments(attachments);
+        m_hdr_pass->set_frame_attachments(last_pass->get_attachments());
         m_hdr_pass->render(nullptr, nullptr);
         fbo_name = m_hdr_pass->get_fbo()->get_name();
     }

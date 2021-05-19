@@ -25,6 +25,6 @@ namespace pipeline
     private:
         float m_exposure = 1.f;
         float m_gamma = 2.2f;
-        int m_algorithm;
+        int m_algorithm = 0;
     };
 }

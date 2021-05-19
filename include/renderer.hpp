@@ -50,8 +50,8 @@ enum Debug_Mode
 struct Renderer_Info
 {
     // Environment Map Infos
-    int current_hdr_map = 1;
-    const char* hdr_files[2] = {"studio", "loft"};
+    int current_hdr_map = 0;
+    const char* hdr_files[6] = {"studio", "loft", "bridge", "night1", "daytime", "sunset"};
     
     // Debug Texture mode Infos
     bool debug = false;
